@@ -1,0 +1,25 @@
+[package]
+name = "oxidize"
+version = "0.0.1"
+authors = ["Nathaniel van Diepen <eeems@eeems.codes>"]
+repository = "https://github.com/Eeems/oxidize"
+license = "MIT"
+description = "New and better reMarkable UI"
+readme = "README.md"
+exclude = ["docker-toolchain/*"]
+
+[build]
+target= "armv7-unknown-linux-gnueabihf"
+
+[dependencies]
+chrono = "0.4.0"
+libremarkable = { git = "https://github.com/Eeems/libremarkable.git" }
+log = "0.4.1"
+lazy_static = "1.0.0"
+
+[features]
+enable-runtime-benchmarking = []
+
+[profile.release]
+debug = true
+
