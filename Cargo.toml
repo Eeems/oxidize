@@ -22,6 +22,8 @@ libremarkable = { git = "https://github.com/Eeems/libremarkable.git", rev="18823
 log = "0.4.1"
 rusttype = "0.4.1"
 textwrap = { version = "0.11", features = ["hyphenation"] }
+wifiscanner = "0.3.6"
+wpactrl = "0.3.1"
 
 [features]
 enable-runtime-benchmarking = []

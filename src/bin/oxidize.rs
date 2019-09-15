@@ -184,6 +184,7 @@ fn get_battery_text(font: &rusttype::Font, size: f32) -> (String, usize) {
 
 fn main(){
     env_logger::init();
+    wifi::init();
     let filepath;
     match env::var_os("LC_ALL") {
         Some(val) => {
