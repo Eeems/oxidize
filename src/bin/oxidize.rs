@@ -54,7 +54,8 @@ use std::string::String;
 use std::thread;
 use std::time::Duration;
 
-use crate::wifi;
+extern crate oxidize;
+use oxidize::wifi;
 
 // extern crate hyphenation;
 // use hyphenation::{Language, Load, Standard};
@@ -137,14 +138,14 @@ fn loop_update_topbar(app: &mut appctx::ApplicationContext, millis: u64) {
             let (status, width) = get_battery_text(&framebuffer.default_font, *scale);
             *text = status;
         }
-        let wifi;
-        if wifi::state().unwrap() == "up" {
-            wifi = "📶";
-        } else{
-            wifi = "";
-        }
         if let UIElement::Text { ref mut text, .. } = wifi_label.write().inner {
-            *text = wifi;
+            let status;
+            if wifi::state().unwrap() == "up" {
+                status = "📶";
+            } else{
+                status = "";
+            }
+            *text = status.to_string();
         }
 
         app.flash_element("time");
@@ -225,11 +226,11 @@ fn main(){
             ..Default::default()
         },
     );
-    let wifi;
+    let wifistatus;
     if wifi::state().unwrap() == "up" {
-        wifi = "📶";
+        wifistatus = "📶";
     } else{
-        wifi = "";
+        wifistatus = "";
     }
     app.add_element(
         "wifi",
@@ -238,7 +239,7 @@ fn main(){
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
                 foreground: color::BLACK,
-                text: wifi.to_owned(),
+                text: wifistatus.to_owned(),
                 scale: 20.0,
                 border_px: 0,
             },
