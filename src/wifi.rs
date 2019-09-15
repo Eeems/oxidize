@@ -1,15 +1,10 @@
 extern crate wifiscanner;
 extern crate wpactrl;
+extern crate subprocess;
 
 use std::fs::File;
-use std::io::BufReader;
-use std::io::BufRead;
 use std::io::Read;
-use std::io::Seek;
-use std::io::SeekFrom;
-use std::io::Write;
 use std::process;
-use std::path::Path;
 
 fn read_attribute(attr: &str) -> Result<String, String> {
     let mut data = String::new();
@@ -23,6 +18,21 @@ fn read_attribute(attr: &str) -> Result<String, String> {
 }
 pub fn state() -> Result<String, String> {
     Ok(read_attribute("operstate")?)
+}
+pub fn online() -> Result<bool, String> {
+    let ip = subprocess::Exec::shell("ip r | grep default | awk '{print $3}'")
+        .stdout(subprocess::Redirection::Pipe)
+        .capture()
+        .unwrap()
+        .stdout_str();
+    if ip.is_empty() {
+        return Err("No default found".to_string());
+    }
+    let success = subprocess::Exec::shell(format!("echo -n > /dev/tcp/{}/53", ip))
+        .join()
+        .unwrap()
+        .success();
+    return Ok(success);
 }
 pub fn scan() -> Result<Vec<wifiscanner::Wifi>, wifiscanner::Error> {
     return wifiscanner::scan();

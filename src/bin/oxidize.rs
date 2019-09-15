@@ -14,6 +14,7 @@ use libremarkable::input::{
 };
 use libremarkable::ui_extensions::element::{
     UIElement,
+    UIElementHandle,
     UIElementWrapper,
     UIConstraintRefresh,
 };
@@ -120,6 +121,15 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
         }
         _=> return,
     };
+}
+
+fn on_toggle_wifi(app: &mut appctx::ApplicationContext, _: UIElementHandle) {
+    if wifi::state().unwrap() == "up" {
+        wifi::disable();
+    } else{
+        wifi::enable();
+        wifi::reconnect();
+    }
 }
 
 fn loop_update_topbar(app: &mut appctx::ApplicationContext, millis: u64) {
@@ -261,6 +271,22 @@ fn main(){
             ..Default::default()
         },
     );
+    app.add_element(
+        "wifiToggle",
+        UIElementWrapper {
+            position: cgmath::Point2 { x: 960, y: 580 },
+            refresh: UIConstraintRefresh::Refresh,
+
+            onclick: Some(on_toggle_wifi),
+            inner: UIElement::Text {
+                foreground: color::BLACK,
+                text: "Toggle wifi".to_owned(),
+                scale: 45.0,
+                border_px: 5,
+            },
+            ..Default::default()
+        },
+    );
     // let hyphenator = Standard::from_embedded(Language::EnglishUS).unwrap();
     // let wrapper = Wrapper::with_splitter(18, hyphenator);
     app.draw_elements();
@@ -271,6 +297,6 @@ fn main(){
     });
 
     info!("Init complete. Beginning event dispatch...");
-    app.dispatch_events(false, false, true);
+    app.dispatch_events(false, true, true);
     clock_thread.join().unwrap();
 }
