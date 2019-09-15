@@ -21,31 +21,6 @@ fn read_attribute(attr: &str) -> Result<String, String> {
         },
     }
 }
-pub fn init() {
-    if Path::new("/lib/systemd/system/wpa_supplicant.service").exists() {
-        let mut file = File::open("/lib/systemd/system/wpa_supplicant.service").unwrap();
-        let reader = BufReader::new(&file);
-        let mut newtext = "".to_string();
-        let mut changed = false;
-        for (num, line) in reader.lines().enumerate() {
-            let text: String = line.unwrap().chars().collect();
-            if text == "ExecStart=/usr/sbin/wpa_supplicant -u\n" {
-                changed = true;
-                newtext += "ExecStart=/usr/sbin/wpa_supplicant -u -O /var/run/wpa_supplicant\n";
-            } else{
-                newtext += &text;
-            }
-        }
-        if changed {
-            file.seek(SeekFrom::Start(0));
-            file.write_all(newtext.as_bytes());
-            let status = process::Command::new("systemctl")
-                .args(&["restart", "wpa_supplicant"])
-                .status()
-                .expect("Failed to restart wpa_supplicant");
-        }
-    }
-}
 pub fn state() -> Result<String, String> {
     Ok(read_attribute("operstate")?)
 }
