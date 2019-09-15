@@ -54,6 +54,8 @@ use std::string::String;
 use std::thread;
 use std::time::Duration;
 
+use crate::wifi;
+
 // extern crate hyphenation;
 // use hyphenation::{Language, Load, Standard};
 
@@ -121,6 +123,7 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
 
 fn loop_update_topbar(app: &mut appctx::ApplicationContext, millis: u64) {
     let time_label = app.get_element_by_name("time").unwrap();
+    let wifi_label = app.get_element_by_name("wifi").unwrap();
     let battery_label = app.get_element_by_name("battery").unwrap();
     loop {
         // Get the datetime
@@ -134,7 +137,18 @@ fn loop_update_topbar(app: &mut appctx::ApplicationContext, millis: u64) {
             let (status, width) = get_battery_text(&framebuffer.default_font, *scale);
             *text = status;
         }
+        let wifi;
+        if wifi::state().unwrap() == "up" {
+            wifi = "📶";
+        } else{
+            wifi = "";
+        }
+        if let UIElement::Text { ref mut text, .. } = wifi_label.write().inner {
+            *text = wifi;
+        }
+
         app.flash_element("time");
+        app.flash_element("wifi");
         app.flash_element("battery");
         thread::sleep(Duration::from_millis(millis));
     }
@@ -195,7 +209,7 @@ fn main(){
         let collection = rusttype::FontCollection::from_bytes(font_data);
         framebuffer.default_font = collection.into_font().unwrap();
     }
-    app.clear(true);
+    // app.clear(true);
     let (text, width) = get_battery_text(&framebuffer.default_font, 20.0);
     app.add_element(
         "battery",
@@ -211,6 +225,12 @@ fn main(){
             ..Default::default()
         },
     );
+    let wifi;
+    if wifi::state().unwrap() == "up" {
+        wifi = "📶";
+    } else{
+        wifi = "";
+    }
     app.add_element(
         "wifi",
         UIElementWrapper {
@@ -218,7 +238,7 @@ fn main(){
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
                 foreground: color::BLACK,
-                text: "📶".to_owned(),
+                text: wifi.to_owned(),
                 scale: 20.0,
                 border_px: 0,
             },
