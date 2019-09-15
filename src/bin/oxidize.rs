@@ -210,7 +210,7 @@ fn main(){
         let collection = rusttype::FontCollection::from_bytes(font_data);
         framebuffer.default_font = collection.into_font().unwrap();
     }
-    // app.clear(true);
+    app.clear(true);
     let (text, width) = get_battery_text(&framebuffer.default_font, 20.0);
     app.add_element(
         "battery",
