@@ -12,10 +12,16 @@ exclude = ["docker-toolchain/*"]
 target= "armv7-unknown-linux-gnueabihf"
 
 [dependencies]
+cgroups-fs="1.1.1"
 chrono = "0.4.0"
-libremarkable = { git = "https://github.com/Eeems/libremarkable.git" }
-log = "0.4.1"
+cute = "0.3.0"
+gettext = "0.4.0"
+hyphenation = { version = "0.7.1", features = ["embed_all"] }
 lazy_static = "1.0.0"
+libremarkable = { git = "https://github.com/Eeems/libremarkable.git", rev="1882355e5b2d421a2102a1ee2b0ba602deff7ddf" }
+log = "0.4.1"
+rusttype = "0.4.1"
+textwrap = { version = "0.11", features = ["hyphenation"] }
 
 [features]
 enable-runtime-benchmarking = []

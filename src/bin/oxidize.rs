@@ -10,7 +10,7 @@ use libremarkable::framebuffer::common::color;
 use libremarkable::input::{
     gpio,
     multitouch,
-    wacom
+    wacom,
 };
 use libremarkable::ui_extensions::element::{
     UIElement,
@@ -24,6 +24,9 @@ use libremarkable::stopwatch;
 #[macro_use]
 extern crate lazy_static;
 
+// #[macro_use(c)]
+// extern crate cute;
+
 #[macro_use]
 extern crate log;
 extern crate env_logger;
@@ -34,12 +37,31 @@ use chrono::{
     Local,
 };
 
+extern crate gettext;
+use gettext::Catalog;
+
+extern crate rusttype;
+
 use std::sync::atomic::{
     AtomicBool,
     Ordering,
 };
-use std::time::Duration;
+use std::env;
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
+use std::string::String;
 use std::thread;
+use std::time::Duration;
+
+// extern crate hyphenation;
+// use hyphenation::{Language, Load, Standard};
+
+// extern crate cgroups_fs;
+// use cgroups_fs
+
+// extern crate textwrap;
+// use textwrap::Wrapper;
 
 lazy_static! {
     static ref WACOM_IN_RANGE: AtomicBool = AtomicBool::new(false);
@@ -105,64 +127,99 @@ fn loop_update_topbar(app: &mut appctx::ApplicationContext, millis: u64) {
         let dt: DateTime<Local> = Local::now();
 
         if let UIElement::Text { ref mut text, .. } = time_label.write().inner {
-            *text = format!("{}", dt.format("%F %I:%M:%S %p"));
+            *text = format!("{}", dt.format("%F %I:%M %p"));
         }
-
-        if let UIElement::Text { ref mut text, .. } = battery_label.write().inner {
-            *text = format!(
-                "{0:<128}",
-                format!(
-                    "{0} — {1}%",
-                    battery::human_readable_charging_status().unwrap(),
-                    battery::percentage().unwrap()
-                )
-            );
+        let framebuffer = app.get_framebuffer_ref();
+        if let UIElement::Text { ref mut text, ref scale,.. } = battery_label.write().inner {
+            let (status, width) = get_battery_text(&framebuffer.default_font, *scale);
+            *text = status;
         }
-        app.draw_element("time");
-        app.draw_element("battery");
+        app.flash_element("time");
+        app.flash_element("battery");
         thread::sleep(Duration::from_millis(millis));
     }
 }
 
+fn get_battery_text(font: &rusttype::Font, size: f32) -> (String, usize) {
+    let icon;
+    let battery_status = battery::human_readable_charging_status().unwrap();
+    if battery_status == "Discharging"{
+        icon = "🔋"
+    } else {
+        icon = "🔌"
+    }
+    let status = format!(
+        "{0}{1}%",
+        icon,
+        battery::percentage().unwrap(),
+    );
+    let scale = rusttype::Scale {
+        x: size as f32,
+        y: size as f32,
+    };
+    let point = rusttype::point(0.0, font.v_metrics(scale).ascent);
+    let glyphs = font.layout(&status, scale, point);
+    let width = glyphs
+        .map(|g| g.position().x as f32 + g.unpositioned().h_metrics().advance_width)
+        .next()
+        .unwrap_or(0.0)
+        .ceil() as usize;
+    return (format!("{0:<5}", status), width);
+}
+
 fn main(){
     env_logger::init();
+    let filepath;
+    match env::var_os("LC_ALL") {
+        Some(val) => {
+            filepath = format!("{}.mo", val.into_string().unwrap());
+        }
+        None => {
+            filepath = "en.mo".to_string();
+        }
+    }
+    if Path::new(&filepath).exists() {
+        let file = File::open(filepath).unwrap();
+        let catalog = Catalog::parse(file).unwrap();
+    } else {
+        let catalog = Catalog::empty();
+    }
     let mut app: appctx::ApplicationContext =
         appctx::ApplicationContext::new(
             on_button_press, on_wacom_input, on_touch_handler);
+    let framebuffer = app.get_framebuffer_ref();
+    if Path::new("font.ttf").exists() {
+        let mut fontfile = File::open("font.ttf").unwrap();
+        let mut font_data = vec![];
+        fontfile.read_to_end(&mut font_data);
+        let collection = rusttype::FontCollection::from_bytes(font_data);
+        framebuffer.default_font = collection.into_font().unwrap();
+    }
     app.clear(true);
-
+    let (text, width) = get_battery_text(&framebuffer.default_font, 20.0);
     app.add_element(
-        "text",
+        "battery",
         UIElementWrapper {
-            position: cgmath::Point2 { x: 30, y: 50 },
+            position: cgmath::Point2 { x: 10, y: 20 },
             refresh: UIConstraintRefresh::Refresh,
-
-            onclick: None,
             inner: UIElement::Text {
                 foreground: color::BLACK,
-                text: "Hello World! Press middle button to exit".to_owned(),
-                scale: 35.0,
+                text: text,
+                scale: 20.0,
                 border_px: 0,
             },
             ..Default::default()
         },
     );
     app.add_element(
-        "battery",
+        "wifi",
         UIElementWrapper {
-            position: cgmath::Point2 { x: 30, y: 215 },
+            position: cgmath::Point2 { x: 100, y: 20 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
                 foreground: color::BLACK,
-                text: format!(
-                    "{0:<128}",
-                    format!(
-                        "{0} — {1}%",
-                        battery::human_readable_charging_status().unwrap(),
-                        battery::percentage().unwrap()
-                    )
-                ),
-                scale: 44.0,
+                text: "📶".to_owned(),
+                scale: 20.0,
                 border_px: 0,
             },
             ..Default::default()
@@ -172,17 +229,19 @@ fn main(){
     app.add_element(
         "time",
         UIElementWrapper {
-            position: cgmath::Point2 { x: 30, y: 150 },
+            position: cgmath::Point2 { x: 600, y: 20 },
             refresh: UIConstraintRefresh::Refresh,
             inner: UIElement::Text {
                 foreground: color::BLACK,
-                text: format!("{}", dt.format("%F %I:%M:%S %p")),
-                scale: 75.0,
+                text: format!("{}", dt.format("%F %I:%M %p")),
+                scale: 20.0,
                 border_px: 0,
             },
             ..Default::default()
         },
     );
+    // let hyphenator = Standard::from_embedded(Language::EnglishUS).unwrap();
+    // let wrapper = Wrapper::with_splitter(18, hyphenator);
     app.draw_elements();
 
     let appref = app.upgrade_ref();
