@@ -449,7 +449,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "libremarkable"
 version = "0.3.2"
-source = "git+https://github.com/Eeems/libremarkable.git#1882355e5b2d421a2102a1ee2b0ba602deff7ddf"
+source = "git+https://github.com/Eeems/libremarkable.git?rev=1882355e5b2d421a2102a1ee2b0ba602deff7ddf#1882355e5b2d421a2102a1ee2b0ba602deff7ddf"
 dependencies = [
  "aabb-quadtree 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "atomic 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -656,7 +656,7 @@ dependencies = [
  "gettext 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyphenation 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "libremarkable 0.3.2 (git+https://github.com/Eeems/libremarkable.git)",
+ "libremarkable 0.3.2 (git+https://github.com/Eeems/libremarkable.git?rev=1882355e5b2d421a2102a1ee2b0ba602deff7ddf)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "rusttype 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "textwrap 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1079,7 +1079,7 @@ dependencies = [
 "checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 "checksum libc 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = "e32a70cf75e5846d53a673923498228bbec6a8624708a9ea5645f075d6276122"
 "checksum libc 0.2.62 (registry+https://github.com/rust-lang/crates.io-index)" = "34fcd2c08d2f832f376f4173a231990fa5aef4e99fb569867318a227ef4c06ba"
-"checksum libremarkable 0.3.2 (git+https://github.com/Eeems/libremarkable.git)" = "<none>"
+"checksum libremarkable 0.3.2 (git+https://github.com/Eeems/libremarkable.git?rev=1882355e5b2d421a2102a1ee2b0ba602deff7ddf)" = "<none>"
 "checksum line_drawing 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "5cc7ad3d82c845bdb5dde34ffdcc7a5fb4d2996e1e1ee0f19c33bc80e15196b9"
 "checksum log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)" = "14b6052be84e6b71ab17edffc2eeabf5c2c3ae1fdb464aae35ac50c67a44e1f7"
 "checksum lua52-sys 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "d451db153c94e455dc817d388f9674f6232425c28db3509e90251c55b8df2f94"
