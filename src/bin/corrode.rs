@@ -2,24 +2,13 @@
 
 extern crate libremarkable;
 use libremarkable::appctx;
-use libremarkable::framebuffer::{
-    cgmath,
-    FramebufferBase,
-    FramebufferDraw,
-    FramebufferRefresh,
-};
-use libremarkable::framebuffer::common::{
-    color,
-    display_temp,
-    dither_mode,
-    waveform_mode,
-};
+use libremarkable::framebuffer::cgmath;
+use libremarkable::framebuffer::common::color;
 use libremarkable::input::{
     gpio,
     multitouch,
     wacom,
 };
-use libremarkable::framebuffer::refresh::PartialRefreshMode;
 use libremarkable::ui_extensions::element::{
     UIElement,
     UIElementWrapper,
@@ -53,7 +42,6 @@ use std::env;
 use std::fs::{self, File};
 use std::io::Read;
 use std::path::Path;
-use std::collections::hash_map::Keys;
 
 extern crate oxidize;
 
@@ -146,27 +134,8 @@ fn draw_folder(app: &mut appctx::ApplicationContext, folder_path: &str){
     app.clear(false);
     let app2 = app.upgrade_ref();
     let keys: Vec<&String> = app.ui_elements.keys().collect();
-    // let framebuffer = app.get_framebuffer_ref();
     for key in keys {
         if key.starts_with("item.") {
-            // let locked_element = app.get_element(key);
-            // let mut element = locked_element.write();
-            // if let Some(rect) = element.last_drawn_rect {
-            //     framebuffer.fill_rect(
-            //         cgmath::Point2 { x: rect.left as i32, y: rect.top  as i32 },
-            //         cgmath::Vector2 { x: rect.width as i32, y: rect.height as i32 },
-            //         color::BLACK,
-            //     );
-            //     framebuffer.partial_refresh(
-            //         &rect,
-            //         PartialRefreshMode::Wait,
-            //         waveform_mode::WAVEFORM_MODE_DU,
-            //         display_temp::TEMP_USE_AMBIENT,
-            //         dither_mode::EPDC_FLAG_USE_DITHERING_PASSTHROUGH,
-            //         0,
-            //         false,
-            //     );
-            // }
             app2.remove_element(key.as_str());
         }
     }
