@@ -121,15 +121,17 @@ fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle)
     println!("Click");
     if let UIElement::Text { ref text, .. } = element.read().inner {
         println!("item: {}", text);
-        let path = FOLDER_PATH.read().unwrap();
-        let path = Path::new(&format!("{0}/{1}", path, text))
+        let mut folderpath = FOLDER_PATH.write().unwrap();
+        println!("Old Path: {}", folderpath);
+        let path = Path::new(&format!("{0}/{1}", folderpath.clone(), text))
             .canonicalize()
             .unwrap()
             .into_os_string()
             .into_string()
             .unwrap();
-        let mut newpath = FOLDER_PATH.write().unwrap();
-        *newpath = path.clone();
+        println!("New Path: {}", path);
+        *folderpath = path.clone();
+        println!("Path updated!");
         draw_folder(app, &path.as_str());
     };
 }
