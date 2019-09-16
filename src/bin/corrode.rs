@@ -11,6 +11,7 @@ use libremarkable::input::{
 };
 use libremarkable::ui_extensions::element::{
     UIElement,
+    UIElementHandle,
     UIElementWrapper,
     UIConstraintRefresh,
 };
@@ -35,6 +36,7 @@ extern crate rusttype;
 
 use std::sync::atomic::{
     AtomicBool,
+    AtomicPtr,
     Ordering,
 };
 use std::convert::TryInto;
@@ -53,6 +55,7 @@ use textwrap::Wrapper;
 
 lazy_static! {
     static ref WACOM_IN_RANGE: AtomicBool = AtomicBool::new(false);
+    static ref FOLDER_PATH: AtomicPtr<String> = AtomicPtr::new(&mut "/".to_string());
 }
 
 fn on_wacom_input(_app: &mut appctx::ApplicationContext, input: wacom::WacomEvent) {
@@ -103,7 +106,13 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
         }
         gpio::PhysicalButton::RIGHT => {
             println!("Reloading view");
-            draw_folder(app.upgrade_ref(), "/");
+            unsafe {
+                if let Some(path) = FOLDER_PATH.load(Ordering::Relaxed).as_ref() {
+                    draw_folder(app.upgrade_ref(), path.as_str());
+                } else {
+                    println!("Failed to load atomic");
+                }
+            }
         }
         gpio::PhysicalButton::WAKEUP => {
             println!("WAKEUP button(?) pressed(?)");
@@ -112,9 +121,30 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
     };
 }
 
+fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle){
+    if let UIElement::Text { ref text, .. } = element.read().inner {
+        unsafe {
+            if let Some(path) = FOLDER_PATH.load(Ordering::Relaxed).as_ref() {
+                let mut path = Path::new(&format!("{0}/{1}", path, text))
+                    .canonicalize()
+                    .unwrap()
+                    .into_os_string()
+                    .into_string()
+                    .unwrap();
+                FOLDER_PATH.store(&mut path, Ordering::Relaxed);
+                draw_folder(app, &path.as_str());
+            } else {
+                println!("Failed to load atomic");
+            }
+        }
+    };
+}
+
 fn draw_folder(app: &mut appctx::ApplicationContext, folder_path: &str){
+    println!("CWD: {}", folder_path);
     let dir = Path::new(folder_path);
     if !dir.exists() || !dir.is_dir() {
+        println!("Invalid folder");
         return;
     }
     let mut data = vec![String::from("."), String::from("..")];
@@ -151,6 +181,7 @@ fn draw_folder(app: &mut appctx::ApplicationContext, folder_path: &str){
                 UIElementWrapper {
                     position: cgmath::Point2 { x: 10, y: y },
                     refresh: UIConstraintRefresh::Refresh,
+                    onclick: Some(on_file_click),
                     inner: UIElement::Text {
                         foreground: color::BLACK,
                         text: text,
@@ -195,7 +226,13 @@ fn main(){
         framebuffer.default_font = collection.into_font().unwrap();
     }
     app.clear(true);
-    draw_folder(app.upgrade_ref(), "/");
+    unsafe {
+        if let Some(path) = FOLDER_PATH.load(Ordering::Relaxed).as_ref() {
+            draw_folder(app.upgrade_ref(), path);
+        } else {
+            println!("Failed to load atomic");
+        }
+    }
     info!("Init complete. Beginning event dispatch...");
     app.dispatch_events(true, true, true);
 }
