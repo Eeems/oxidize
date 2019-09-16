@@ -118,7 +118,9 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
 }
 
 fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle){
+    println!("Click");
     if let UIElement::Text { ref text, .. } = element.read().inner {
+        println!("item: {}", text);
         let path = FOLDER_PATH.read().unwrap();
         let path = Path::new(&format!("{0}/{1}", path, text))
             .canonicalize()
