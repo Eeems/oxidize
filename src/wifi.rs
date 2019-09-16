@@ -1,10 +1,10 @@
 extern crate wifiscanner;
-extern crate wpactrl;
 extern crate subprocess;
 
 use std::fs::File;
 use std::io::Read;
 use std::process;
+use std::string::String;
 
 fn read_attribute(attr: &str) -> Result<String, String> {
     let mut data = String::new();
@@ -15,6 +15,16 @@ fn read_attribute(attr: &str) -> Result<String, String> {
             _ => Ok(data.trim().to_owned()),
         },
     }
+}
+fn wpa_cli(command: &str) -> Result<bool, String> {
+    let status = process::Command::new("wpa_cli")
+        .arg(command)
+        .status()
+        .expect("Failed to run wpa_cli");
+    if !status.success() {
+        return Err(format!("Failed to run wpa_cli {}", command));
+    }
+    return Ok(true);
 }
 pub fn state() -> Result<String, String> {
     Ok(read_attribute("operstate")?)
@@ -37,17 +47,20 @@ pub fn online() -> Result<bool, String> {
 pub fn scan() -> Result<Vec<wifiscanner::Wifi>, wifiscanner::Error> {
     return wifiscanner::scan();
 }
-pub fn disconnect() {
-    let mut wpa = wpactrl::WpaCtrl::new().open().unwrap();
-    wpa.request("disconnect");
+pub fn disconnect() -> Result<bool, String> {
+    return wpa_cli("disconnect");
 }
-pub fn reconnect() {
-    let mut wpa = wpactrl::WpaCtrl::new().open().unwrap();
-    wpa.request("reconnect");
+pub fn reconnect() -> Result<bool, String> {
+    return wpa_cli("reconnect");
 }
-pub fn restart() {
-    disable();
-    enable();
+pub fn restart() -> Result<bool, String> {
+    match disable() {
+        Ok(_) => {},
+        Err(e) => {
+            println!("Failed to disable {:?}", e);
+        }
+    };
+    return enable();
 }
 pub fn disable() -> Result<bool, String> {
     let status = process::Command::new("ip")
@@ -72,8 +85,18 @@ pub fn enable() -> Result<bool, String> {
         return Ok(false);
     }
     let status = process::Command::new("systemctl")
-        .args(&["start", "wpa_supplicant"])
+        .args(&["start", "wpa_supplicant@wlan0"])
         .status()
-        .expect("Failed to start wpa_supplicant");
+        .expect("Failed to start wpa_supplicant service");
     return Ok(status.success());
+}
+pub fn new_connection(ssid: String, password: String) -> Result<bool, String> {
+    let cmd = subprocess::Exec::cmd("wpa_passphrase").args(&[ssid, password]);
+    subprocess::Exec::shell(format!(
+            "{} >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf",
+            cmd.to_cmdline_lossy()))
+        .stdout(subprocess::Redirection::Pipe)
+        .join()
+        .expect("Failed to add new connection");
+    return wpa_cli("reconfigure");
 }

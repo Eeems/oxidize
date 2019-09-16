@@ -71,7 +71,7 @@ lazy_static! {
     static ref WACOM_IN_RANGE: AtomicBool = AtomicBool::new(false);
 }
 
-fn on_wacom_input(app: &mut appctx::ApplicationContext, input: wacom::WacomEvent) {
+fn on_wacom_input(_app: &mut appctx::ApplicationContext, input: wacom::WacomEvent) {
     match input {
         wacom::WacomEvent::InstrumentChange { pen, state } => {
             match pen {
@@ -90,7 +90,7 @@ fn on_wacom_input(app: &mut appctx::ApplicationContext, input: wacom::WacomEvent
     };
 }
 
-fn on_touch_handler(app: &mut appctx::ApplicationContext, input: multitouch::MultitouchEvent) {
+fn on_touch_handler(_app: &mut appctx::ApplicationContext, _input: multitouch::MultitouchEvent) {
     return;
 }
 
@@ -123,12 +123,12 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
     };
 }
 
-fn on_toggle_wifi(app: &mut appctx::ApplicationContext, _: UIElementHandle) {
+fn on_toggle_wifi(_app: &mut appctx::ApplicationContext, _: UIElementHandle) {
     if wifi::state().unwrap() == "up" {
-        wifi::disable();
+        wifi::disable().expect("Failed to disable wifi");
     } else{
-        wifi::enable();
-        wifi::reconnect();
+        wifi::enable().expect("Failed to enable wifi");
+        wifi::reconnect().expect("Failed to reconnect wifi");
     }
 }
 
@@ -145,7 +145,7 @@ fn loop_update_topbar(app: &mut appctx::ApplicationContext, millis: u64) {
         }
         let framebuffer = app.get_framebuffer_ref();
         if let UIElement::Text { ref mut text, ref scale,.. } = battery_label.write().inner {
-            let (status, width) = get_battery_text(&framebuffer.default_font, *scale);
+            let (status, _width) = get_battery_text(&framebuffer.default_font, *scale);
             *text = status;
         }
         if let UIElement::Text { ref mut text, .. } = wifi_label.write().inner {
@@ -205,9 +205,9 @@ fn main(){
     }
     if Path::new(&filepath).exists() {
         let file = File::open(filepath).unwrap();
-        let catalog = Catalog::parse(file).unwrap();
+        let _catalog = Catalog::parse(file).unwrap();
     } else {
-        let catalog = Catalog::empty();
+        let _catalog = Catalog::empty();
     }
     let mut app: appctx::ApplicationContext =
         appctx::ApplicationContext::new(
@@ -216,12 +216,12 @@ fn main(){
     if Path::new("font.ttf").exists() {
         let mut fontfile = File::open("font.ttf").unwrap();
         let mut font_data = vec![];
-        fontfile.read_to_end(&mut font_data);
+        fontfile.read_to_end(&mut font_data).expect("Failed to read font file");
         let collection = rusttype::FontCollection::from_bytes(font_data);
         framebuffer.default_font = collection.into_font().unwrap();
     }
     app.clear(true);
-    let (text, width) = get_battery_text(&framebuffer.default_font, 20.0);
+    let (text, _width) = get_battery_text(&framebuffer.default_font, 20.0);
     app.add_element(
         "battery",
         UIElementWrapper {
