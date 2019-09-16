@@ -2,14 +2,29 @@
 
 extern crate libremarkable;
 use libremarkable::appctx;
-use libremarkable::framebuffer::cgmath;
-use libremarkable::framebuffer::common::color;
+use libremarkable::framebuffer::{
+    cgmath,
+    FramebufferBase,
+    FramebufferDraw,
+    FramebufferRefresh,
+};
+use libremarkable::framebuffer::common::{
+    color,
+    display_temp,
+    dither_mode,
+    waveform_mode,
+};
 use libremarkable::input::{
     gpio,
     multitouch,
     wacom,
 };
-use libremarkable::ui_extensions::element::UIConstraintRefresh;
+use libremarkable::framebuffer::refresh::PartialRefreshMode;
+use libremarkable::ui_extensions::element::{
+    UIElement,
+    UIElementWrapper,
+    UIConstraintRefresh,
+};
 
 #[cfg(feature = "enable-runtime-benchmarking")]
 use libremarkable::stopwatch;
@@ -33,10 +48,12 @@ use std::sync::atomic::{
     AtomicBool,
     Ordering,
 };
+use std::convert::TryInto;
 use std::env;
 use std::fs::{self, File};
 use std::io::Read;
 use std::path::Path;
+use std::collections::hash_map::Keys;
 
 extern crate oxidize;
 
@@ -92,8 +109,13 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
 
     match btn {
         gpio::PhysicalButton::MIDDLE => {
+            println!("Exiting");
             app.clear(btn == gpio::PhysicalButton::MIDDLE);
             std::process::exit(0);
+        }
+        gpio::PhysicalButton::RIGHT => {
+            println!("Reloading view");
+            draw_folder(app.upgrade_ref(), "/");
         }
         gpio::PhysicalButton::WAKEUP => {
             println!("WAKEUP button(?) pressed(?)");
@@ -119,20 +141,57 @@ fn draw_folder(app: &mut appctx::ApplicationContext, folder_path: &str){
         }
     }
     let hyphenator = Standard::from_embedded(Language::EnglishUS).unwrap();
-    let wrapper = Wrapper::with_splitter(700, hyphenator);
-    let mut y = 20.0;
+    let (width, _ ) = app.get_dimensions();
+    let wrapper = Wrapper::with_splitter(width.try_into().unwrap(), hyphenator);
+    app.clear(false);
+    let app2 = app.upgrade_ref();
+    let keys: Vec<&String> = app.ui_elements.keys().collect();
+    // let framebuffer = app.get_framebuffer_ref();
+    for key in keys {
+        if key.starts_with("item.") {
+            // let locked_element = app.get_element(key);
+            // let mut element = locked_element.write();
+            // if let Some(rect) = element.last_drawn_rect {
+            //     framebuffer.fill_rect(
+            //         cgmath::Point2 { x: rect.left as i32, y: rect.top  as i32 },
+            //         cgmath::Vector2 { x: rect.width as i32, y: rect.height as i32 },
+            //         color::BLACK,
+            //     );
+            //     framebuffer.partial_refresh(
+            //         &rect,
+            //         PartialRefreshMode::Wait,
+            //         waveform_mode::WAVEFORM_MODE_DU,
+            //         display_temp::TEMP_USE_AMBIENT,
+            //         dither_mode::EPDC_FLAG_USE_DITHERING_PASSTHROUGH,
+            //         0,
+            //         false,
+            //     );
+            // }
+            app2.remove_element(key.as_str());
+        }
+    }
+
+    let scale = 50.0;
+    let mut y = 10 + scale as i32;
     for path in data {
         for line in wrapper.wrap_iter(path.as_str()) {
-            app.display_text(
-                cgmath::Point2{ x: 10.0, y: y },
-                color::BLACK,
-                20.0,
-                1,
-                0,
-                line.into_owned(),
-                UIConstraintRefresh::Refresh
+            let text = line.into_owned();
+            let key = format!("item.{}", text);
+            app.add_element(
+                key.as_str(),
+                UIElementWrapper {
+                    position: cgmath::Point2 { x: 10, y: y },
+                    refresh: UIConstraintRefresh::Refresh,
+                    inner: UIElement::Text {
+                        foreground: color::BLACK,
+                        text: text,
+                        scale: scale,
+                        border_px: 0,
+                    },
+                    ..Default::default()
+                },
             );
-            y += 50.0;
+            y += 60;
         }
     }
     app.draw_elements();

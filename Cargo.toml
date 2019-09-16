@@ -18,7 +18,7 @@ cute = "0.3.0"
 gettext = "0.4.0"
 hyphenation = { version = "0.7.1", features = ["embed_all"] }
 lazy_static = "1.0.0"
-libremarkable = { git = "https://github.com/Eeems/libremarkable.git" }
+libremarkable = { git = "https://github.com/Eeems/libremarkable.git" , rev = "96dcc2ec7859f611be95dab40a33789475f7afbf" }
 log = "0.4.1"
 rusttype = "0.4.1"
 subprocess = "0.1.18"
