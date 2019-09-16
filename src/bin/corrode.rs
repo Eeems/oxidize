@@ -34,16 +34,17 @@ use gettext::Catalog;
 
 extern crate rusttype;
 
-use std::sync::atomic::{
-    AtomicBool,
-    AtomicPtr,
-    Ordering,
-};
+
 use std::convert::TryInto;
 use std::env;
 use std::fs::{self, File};
 use std::io::Read;
 use std::path::Path;
+use std::sync::atomic::{
+    AtomicBool,
+    Ordering,
+};
+use std::sync::RwLock;
 
 extern crate oxidize;
 
@@ -55,7 +56,7 @@ use textwrap::Wrapper;
 
 lazy_static! {
     static ref WACOM_IN_RANGE: AtomicBool = AtomicBool::new(false);
-    static ref FOLDER_PATH: AtomicPtr<String> = AtomicPtr::new(&mut "/".to_string());
+    static ref FOLDER_PATH: RwLock<String> = RwLock::new("/".to_string());
 }
 
 fn on_wacom_input(_app: &mut appctx::ApplicationContext, input: wacom::WacomEvent) {
@@ -106,13 +107,8 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
         }
         gpio::PhysicalButton::RIGHT => {
             println!("Reloading view");
-            unsafe {
-                if let Some(path) = FOLDER_PATH.load(Ordering::Relaxed).as_ref() {
-                    draw_folder(app.upgrade_ref(), path.as_str());
-                } else {
-                    println!("Failed to load atomic");
-                }
-            }
+            let path = FOLDER_PATH.read().unwrap();
+            draw_folder(app.upgrade_ref(), &path.as_str());
         }
         gpio::PhysicalButton::WAKEUP => {
             println!("WAKEUP button(?) pressed(?)");
@@ -123,20 +119,16 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
 
 fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle){
     if let UIElement::Text { ref text, .. } = element.read().inner {
-        unsafe {
-            if let Some(path) = FOLDER_PATH.load(Ordering::Relaxed).as_ref() {
-                let mut path = Path::new(&format!("{0}/{1}", path, text))
-                    .canonicalize()
-                    .unwrap()
-                    .into_os_string()
-                    .into_string()
-                    .unwrap();
-                FOLDER_PATH.store(&mut path, Ordering::Relaxed);
-                draw_folder(app, &path.as_str());
-            } else {
-                println!("Failed to load atomic");
-            }
-        }
+        let path = FOLDER_PATH.read().unwrap();
+        let path = Path::new(&format!("{0}/{1}", path, text))
+            .canonicalize()
+            .unwrap()
+            .into_os_string()
+            .into_string()
+            .unwrap();
+        let mut newpath = FOLDER_PATH.write().unwrap();
+        *newpath = path.clone();
+        draw_folder(app, &path.as_str());
     };
 }
 
@@ -226,13 +218,8 @@ fn main(){
         framebuffer.default_font = collection.into_font().unwrap();
     }
     app.clear(true);
-    unsafe {
-        if let Some(path) = FOLDER_PATH.load(Ordering::Relaxed).as_ref() {
-            draw_folder(app.upgrade_ref(), path);
-        } else {
-            println!("Failed to load atomic");
-        }
-    }
+    let path = FOLDER_PATH.read().unwrap();
+    draw_folder(app.upgrade_ref(), &path.as_str());
     info!("Init complete. Beginning event dispatch...");
     app.dispatch_events(true, true, true);
 }
