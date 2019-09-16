@@ -123,12 +123,22 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
     };
 }
 
-fn on_toggle_wifi(_app: &mut appctx::ApplicationContext, _: UIElementHandle) {
+fn on_toggle_wifi(app: &mut appctx::ApplicationContext, _: UIElementHandle) {
     if wifi::state().unwrap() == "up" {
         wifi::disable().expect("Failed to disable wifi");
     } else{
         wifi::enable().expect("Failed to enable wifi");
         wifi::reconnect().expect("Failed to reconnect wifi");
+    }
+    if let UIElement::Text { ref mut text, .. } =
+            app.get_element_by_name("wifi").unwrap().write().inner {
+        let status;
+        if wifi::state().unwrap() == "up" {
+            status = "📶";
+        } else{
+            status = "";
+        }
+        *text = status.to_string();
     }
 }
 
