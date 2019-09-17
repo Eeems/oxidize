@@ -103,7 +103,7 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
     }
 
     match btn {
-        gpio::PhysicalButton::RIGHT => {
+        gpio::PhysicalButton::LEFT => {
             println!("Going back");
             change_path("..");
         }
