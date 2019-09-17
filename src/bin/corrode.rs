@@ -106,10 +106,11 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
         gpio::PhysicalButton::LEFT => {
             println!("Going back");
             change_path("..");
+            draw_folder(app);
         }
         gpio::PhysicalButton::MIDDLE => {
             println!("Exiting");
-            app.clear(btn == gpio::PhysicalButton::MIDDLE);
+            app.clear(true);
             std::process::exit(0);
         }
         gpio::PhysicalButton::RIGHT => {
