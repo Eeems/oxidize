@@ -107,8 +107,7 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
         }
         gpio::PhysicalButton::RIGHT => {
             println!("Reloading view");
-            let path = FOLDER_PATH.read().unwrap();
-            draw_folder(app.upgrade_ref(), &path.as_str());
+            draw_folder(app.upgrade_ref());
         }
         gpio::PhysicalButton::WAKEUP => {
             println!("WAKEUP button(?) pressed(?)");
@@ -121,29 +120,45 @@ fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle)
     println!("Click");
     if let UIElement::Text { ref text, .. } = element.read().inner {
         println!("item: {}", text);
-        let mut folderpath = FOLDER_PATH.write().unwrap();
-        println!("Old Path: {}", folderpath);
-        let path = Path::new(&format!("{0}/{1}", folderpath.clone(), text))
-            .canonicalize()
-            .unwrap()
-            .into_os_string()
-            .into_string()
-            .unwrap();
-        println!("New Path: {}", path);
-        *folderpath = path.clone();
-        println!("Path updated!");
-        draw_folder(app, &path.as_str());
+        let oldpath = get_path();
+        println!("Old Path: {}", oldpath);
+        let filepath = &format!("{0}/{1}", oldpath.clone(), text);
+        let path = Path::new(filepath);
+        if path.exists() {
+            let path = path.canonicalize()
+                .unwrap()
+                .into_os_string()
+                .into_string()
+                .to_owned()
+                .unwrap();
+            println!("New Path: {}", path);
+            set_path(path.clone());
+            println!("Path updated!");
+            draw_folder(app);
+        } else {
+            let path = path.to_string_lossy().into_owned();
+            println!("Invalid Path: {}", path);
+        }
     };
 }
 
-fn draw_folder(app: &mut appctx::ApplicationContext, folder_path: &str){
+fn get_path() -> String {
+   return FOLDER_PATH.read().unwrap().clone();
+}
+fn set_path(path: String){
+    let mut folderpath = FOLDER_PATH.write().unwrap();
+    *folderpath = path;
+}
+
+fn draw_folder(app: &mut appctx::ApplicationContext){
+    let folder_path = get_path();
     println!("CWD: {}", folder_path);
-    let dir = Path::new(folder_path);
+    let dir = Path::new(folder_path.as_str());
     if !dir.exists() || !dir.is_dir() {
         println!("Invalid folder");
         return;
     }
-    let mut data = vec![String::from("."), String::from("..")];
+    let mut data = vec![String::from("..")];
     if let Ok(entries) = fs::read_dir(dir) {
         for entry in entries {
             if let Ok(entry) = entry {
@@ -162,6 +177,12 @@ fn draw_folder(app: &mut appctx::ApplicationContext, folder_path: &str){
     let keys: Vec<&String> = app.ui_elements.keys().collect();
     for key in keys {
         if key.starts_with("item.") {
+            let element = app2.get_element_by_name(key).unwrap();
+            let wrapper = element.read();
+            app2.remove_active_region_at_point(
+                wrapper.position.x as u16,
+                wrapper.position.y as u16
+            );
             app2.remove_element(key.as_str());
         }
     }
@@ -222,8 +243,7 @@ fn main(){
         framebuffer.default_font = collection.into_font().unwrap();
     }
     app.clear(true);
-    let path = FOLDER_PATH.read().unwrap();
-    draw_folder(app.upgrade_ref(), &path.as_str());
+    draw_folder(app.upgrade_ref());
     info!("Init complete. Beginning event dispatch...");
     app.dispatch_events(true, true, true);
 }
