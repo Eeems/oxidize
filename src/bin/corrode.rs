@@ -173,6 +173,10 @@ fn draw_folder(app: &mut appctx::ApplicationContext){
         println!("Invalid folder");
         return;
     }
+    let path_label = app.get_element_by_name("path").unwrap();
+    if let UIElement::Text { ref mut text, .. } = path_label.write().inner {
+        *text = format!("$ ls {}", folder_path);
+    }
     let mut data = vec![String::from("..")];
     if let Ok(entries) = fs::read_dir(dir) {
         let mut entries: Vec<_> = entries.map(|r| r.unwrap()).collect();
@@ -214,7 +218,7 @@ fn draw_folder(app: &mut appctx::ApplicationContext){
     }
 
     let scale = 50.0;
-    let mut y = 0;
+    let mut y = 1;
     for path in data {
         for line in wrapper.wrap_iter(path.as_str()) {
             let text = line.into_owned();
@@ -276,6 +280,23 @@ fn main(){
         framebuffer.default_font = collection.into_font().unwrap();
     }
     app.clear(true);
+    app.add_element(
+        "path",
+        UIElementWrapper {
+            position: cgmath::Point2 {
+                x: 10,
+                y: 58 as i32
+            },
+            refresh: UIConstraintRefresh::Refresh,
+            inner: UIElement::Text {
+                foreground: color::BLACK,
+                text: format!("$ ls {}", get_path()),
+                scale: 50.0,
+                border_px: 0,
+            },
+            ..Default::default()
+        },
+    );
     draw_folder(app.upgrade_ref());
     info!("Init complete. Beginning event dispatch...");
     app.dispatch_events(true, true, true);
