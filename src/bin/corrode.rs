@@ -3,7 +3,10 @@
 extern crate libremarkable;
 use libremarkable::appctx;
 use libremarkable::framebuffer::cgmath;
-use libremarkable::framebuffer::common::color;
+use libremarkable::framebuffer::common::{
+    color,
+    mxcfb_rect,
+};
 use libremarkable::input::{
     gpio,
     multitouch,
@@ -124,7 +127,7 @@ fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle)
         println!("Old Path: {}", oldpath);
         let filepath = &format!("{0}/{1}", oldpath.clone(), text);
         let path = Path::new(filepath);
-        if path.exists() {
+        if path.is_dir() {
             let path = path.canonicalize()
                 .unwrap()
                 .into_os_string()
@@ -160,13 +163,18 @@ fn draw_folder(app: &mut appctx::ApplicationContext){
     }
     let mut data = vec![String::from("..")];
     if let Ok(entries) = fs::read_dir(dir) {
+        let mut entries: Vec<_> = entries.map(|r| r.unwrap()).collect();
+        entries.sort_by_key(|dir| dir.file_name());
         for entry in entries {
-            if let Ok(entry) = entry {
-                let filename = entry.file_name()
-                    .to_string_lossy()
-                    .into_owned();
-                data.push(filename);
+            let mut filename = entry.file_name()
+                .to_string_lossy()
+                .into_owned();
+            if let Ok(file_type) = entry.file_type() {
+                if file_type.is_dir() {
+                    filename = format!("{}/", filename);
+                }
             }
+            data.push(filename);
         }
     }
     let hyphenator = Standard::from_embedded(Language::EnglishUS).unwrap();
@@ -179,16 +187,22 @@ fn draw_folder(app: &mut appctx::ApplicationContext){
         if key.starts_with("item.") {
             let element = app2.get_element_by_name(key).unwrap();
             let wrapper = element.read();
-            app2.remove_active_region_at_point(
-                wrapper.position.x as u16,
-                wrapper.position.y as u16
-            );
+            let old_filled_rect = match wrapper.last_drawn_rect {
+                Some(rect) => rect,
+                None => mxcfb_rect::invalid(),
+            };
+            if old_filled_rect != mxcfb_rect::invalid() {
+                app2.remove_active_region_at_point(
+                    old_filled_rect.top as u16,
+                    old_filled_rect.left as u16,
+                );
+            }
             app2.remove_element(key.as_str());
         }
     }
 
     let scale = 50.0;
-    let mut y = 10 + scale as i32;
+    let mut y = 0;
     for path in data {
         for line in wrapper.wrap_iter(path.as_str()) {
             let text = line.into_owned();
@@ -196,7 +210,10 @@ fn draw_folder(app: &mut appctx::ApplicationContext){
             app.add_element(
                 key.as_str(),
                 UIElementWrapper {
-                    position: cgmath::Point2 { x: 10, y: y },
+                    position: cgmath::Point2 {
+                        x: 10,
+                        y: (y * 60) + 8 + scale as i32
+                    },
                     refresh: UIConstraintRefresh::Refresh,
                     onclick: Some(on_file_click),
                     inner: UIElement::Text {
@@ -208,7 +225,11 @@ fn draw_folder(app: &mut appctx::ApplicationContext){
                     ..Default::default()
                 },
             );
-            y += 60;
+            y += 1;
+            // Stop drawing when we've reached the bottom of the screen
+            if y == 31 {
+                break;
+            }
         }
     }
     app.draw_elements();
