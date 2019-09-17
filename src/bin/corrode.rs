@@ -103,6 +103,10 @@ fn on_button_press(app: &mut appctx::ApplicationContext, input: gpio::GPIOEvent)
     }
 
     match btn {
+        gpio::PhysicalButton::RIGHT => {
+            println!("Going back");
+            change_path("..");
+        }
         gpio::PhysicalButton::MIDDLE => {
             println!("Exiting");
             app.clear(btn == gpio::PhysicalButton::MIDDLE);
@@ -123,26 +127,33 @@ fn on_file_click(app: &mut appctx::ApplicationContext, element: UIElementHandle)
     println!("Click");
     if let UIElement::Text { ref text, .. } = element.read().inner {
         println!("item: {}", text);
-        let oldpath = get_path();
-        println!("Old Path: {}", oldpath);
-        let filepath = &format!("{0}/{1}", oldpath.clone(), text);
-        let path = Path::new(filepath);
-        if path.is_dir() {
-            let path = path.canonicalize()
-                .unwrap()
-                .into_os_string()
-                .into_string()
-                .to_owned()
-                .unwrap();
-            println!("New Path: {}", path);
-            set_path(path.clone());
-            println!("Path updated!");
+        if change_path(text.as_str()) {
             draw_folder(app);
-        } else {
-            let path = path.to_string_lossy().into_owned();
-            println!("Invalid Path: {}", path);
         }
     };
+}
+
+fn change_path(changepath: &str) -> bool{
+    let oldpath = get_path();
+    println!("Old Path: {}", oldpath);
+    let filepath = &format!("{0}/{1}", oldpath.clone(), changepath);
+    let path = Path::new(filepath);
+    if path.is_dir() {
+        let path = path.canonicalize()
+            .unwrap()
+            .into_os_string()
+            .into_string()
+            .to_owned()
+            .unwrap();
+        println!("New Path: {}", path);
+        set_path(path.clone());
+        println!("Path updated!");
+        return true;
+    } else {
+        let path = path.to_string_lossy().into_owned();
+        println!("Invalid Path: {}", path);
+        return false;
+    }
 }
 
 fn get_path() -> String {
