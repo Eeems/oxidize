@@ -1,0 +1,25 @@
+[package]
+name = "corrode"
+version = "0.0.1"
+authors = ["Nathaniel van Diepen <eeems@eeems.codes>"]
+repository = "https://github.com/Eeems/oxidize/applications/corrode"
+license = "MIT"
+description = "File explorer for reMarkable tablet"
+readme = "README.md"
+build = "build.rs"
+
+[build]
+target= "armv7-unknown-linux-gnueabihf"
+
+[dependencies]
+libc = "*"
+
+[build-dependencies]
+rust_qt_binding_generator = "0.3.4"
+
+[features]
+enable-runtime-benchmarking = []
+
+[profile.release]
+debug = true
+

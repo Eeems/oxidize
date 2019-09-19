@@ -23,6 +23,14 @@ RUN rustup target add armv7-unknown-linux-gnueabihf
 # make the registry folder to ensure correct permissions
 RUN mkdir -p "/home/$UNAME/.cargo/registry"
 
-ADD ./.cargo/config /home/$UNAME/.cargo/config
+COPY .cargo/config /home/$UNAME/.cargo/config
+
+USER root
+RUN curl https://remarkable.engineering/deploy/sdk/poky-glibc-x86_64-meta-toolchain-qt5-cortexa9hf-neon-toolchain-2.1.3.sh \
+  -o install-toolchain.sh
+RUN chmod +x install-toolchain.sh
+RUN ./install-toolchain.sh -y \
+  -d /opt/poky/2.1.3/
+USER $UNAME
 
 RUN rustup update
