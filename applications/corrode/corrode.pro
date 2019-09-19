@@ -31,7 +31,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     src/view/mainview.h
 
-unix:!macx: LIBS += -L$$PWD/../docker-toolchain/qtcreator/files/ -lqsgepaper
+linux-oe-g++ {
+    LIBS += -lqsgepaper
+}
 
 INCLUDEPATH += $$PWD/../docker-toolchain/qtcreator/files
 DEPENDPATH += $$PWD/../docker-toolchain/qtcreator/files
