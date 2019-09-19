@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.2, 2019-09-18T04:04:36. -->
+<!-- Written by QtCreator 4.5.2, 2019-09-19T03:22:00. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -267,24 +267,41 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
+       <value type="QString">/root/project/.build/Release/corrode</value>
        <value type="QString">/root/project/build-tmp-reMarkable-Debug/corrode</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
        <value type="QString">10.11.99.1</value>
+       <value type="QString">10.11.99.1</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
+       <value type="QString">/opt/corrode/bin</value>
        <value type="QString">/opt/corrode/bin</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots">
        <value type="QString">/opt/poky/2.1.3/sysroots/cortexa9hf-neon-poky-linux-gnueabi</value>
+       <value type="QString">/opt/poky/2.1.3/sysroots/cortexa9hf-neon-poky-linux-gnueabi</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
+       <value type="QDateTime">2019-09-19T03:12:38</value>
        <value type="QDateTime">2019-09-18T04:01:34</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
      </valuemap>
-     <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">2</value>
+     <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.2">
+      <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Run custom remote command</value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.GenericRemoteLinuxCustomCommandDeploymentStep</value>
+      <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles"/>
+      <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts"/>
+      <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths"/>
+      <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots"/>
+      <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes"/>
+      <value type="QString" key="RemoteLinuxCustomCommandDeploymentStep.CommandLine">systemctl stop draft</value>
+     </valuemap>
+     <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Deploy</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.BuildSteps.Deploy</value>
@@ -352,7 +369,7 @@
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
-    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">false</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

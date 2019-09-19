@@ -6,7 +6,7 @@ repository = "https://github.com/Eeems/oxidize"
 license = "MIT"
 description = "New and better reMarkable UI"
 readme = "README.md"
-exclude = ["docker-toolchain/*"]
+exclude = ["docker-toolchain/*", "applications/*"]
 
 [build]
 target= "armv7-unknown-linux-gnueabihf"

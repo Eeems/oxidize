@@ -10,6 +10,7 @@
 Q_IMPORT_PLUGIN(QsgEpaperPlugin)
 #endif
 
+
 int main(int argc, char *argv[])
 {
 #ifdef __arm__
@@ -25,7 +26,9 @@ int main(int argc, char *argv[])
     MainView view;
 
     view.rootContext()->setContextProperty("screenGeometry", app.primaryScreen()->geometry());
+    view.rootContext()->setContextProperty("cwd", "/");
     view.setSource(QUrl(QStringLiteral("qrc:/src/view/main.qml")));
+    QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
     view.show();
 
     qDebug() << "view shown";
