@@ -1,7 +1,8 @@
 import QtQuick 2.6
+import QtQuick.Window 2.0
 import "../widget"
 
-Rectangle {
+Item {
     id: root
     visible: visible
     width: screenGeometry.width
@@ -56,9 +57,6 @@ Rectangle {
             height: 100
             onClick: {
                 root.visible = false
-//                for (var i = 0; i < root.children.length; i++){
-//                    root.children[i].visible = false;
-//                }
                 quitTimer.start()
             }
         }
