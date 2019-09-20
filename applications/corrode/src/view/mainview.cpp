@@ -1,9 +1,6 @@
 #include "mainview.h"
 
-MainView::MainView()
-{
-
-}
+MainView::MainView(QQmlEngine *engine) : QQuickView(engine, Q_NULLPTR) { }
 
 void MainView::keyPressEvent(QKeyEvent* ke)
 {

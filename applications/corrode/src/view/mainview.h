@@ -4,11 +4,13 @@
 #include <QObject>
 #include <QQuickView>
 #include <QDebug>
+#include <QQmlEngine>
+#include <QWindow>
 
 class MainView : public QQuickView
 {
 public:
-    MainView();
+    MainView(QQmlEngine *engine);
 public slots:
     void keyPressEvent(QKeyEvent*);
     void mouseMoveEvent(QMouseEvent* me);

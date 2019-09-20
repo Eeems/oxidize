@@ -11,19 +11,20 @@
 class KeyboardHandler : public QObject {
     Q_OBJECT
 public:
-    explicit KeyboardHandler(QObject *parent = 0): QObject(parent) {}
+    explicit KeyboardHandler(QObject *parent = 0) : QObject(parent) {}
+    MainView* view;
     Q_INVOKABLE void virtKeyPress(const QChar &character, const Qt::KeyboardModifiers &modifier){
-        qDebug() << "Test";
-        QKeyEvent *event = new QKeyEvent(QEvent::KeyPress, character.unicode(), modifier, QString(character));
-        qDebug() << "event";
-        QObject *target = TopParent((QObject*)this);
+        QKeyEvent* event = new QKeyEvent(QEvent::KeyPress, character.unicode(), modifier, QString(character));
+//        QObject *target = TopParent((QObject*)this);
+//        QObject *target = MainView::activeFocusItem();
+        QObject* target = view->focusObject();
         if(!target){
             qDebug() << "No target";
             return;
         }
-        qDebug() << "Posting";
+        qDebug() << target;
         QCoreApplication::postEvent(target, event);
-        qDebug() << "Posted";
+        qDebug() << "Key pressed: " << character;
     }
 private:
     QObject* TopParent(QObject* widget){

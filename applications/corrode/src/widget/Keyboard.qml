@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import KeyboardHandler 1.0
 import "."
 
 
@@ -69,7 +70,7 @@ Item {
             Row {
                 spacing: parent.spacing
                 anchors.horizontalCenter: parent.horizontalCenter
-                KeyboardKey { text: "Tab"; size: 2 }
+                KeyboardKey { text: "⇆\nTab"; size: 2 }
                 KeyboardKey { text: "q"; shifttext: "Q" }
                 KeyboardKey { text: "w"; shifttext: "W" }
                 KeyboardKey { text: "e"; shifttext: "E" }
@@ -138,4 +139,5 @@ Item {
             root.focus = true;
         }
     }
+    KeyboardHandler { objectName: "keyboard"; id: handler }
 }

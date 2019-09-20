@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import KeyboardHandler 1.0
 import "."
 
 Item {
@@ -74,5 +73,4 @@ Item {
             }
         }
     }
-    KeyboardHandler { id: handler }
 }
