@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import KeyboardHandler 1.0
 import "."
 
 Item {
@@ -11,6 +12,7 @@ Item {
     property string shiftctrltext: shifttext
     property string altctrltext: alttext
     property string shiftaltctrltext: shiftalttext
+    property string value: ""
     property int size: 1
     property int basesize: 90
     property int fontsize: 8
@@ -52,8 +54,11 @@ Item {
         }
         return text;
     }
-    function update(){
-        button.text = root.getText()
+    function getValue(){
+        if(this.value == ""){
+            return this.getText();
+        }
+        return this.value;
     }
 
     Button {
@@ -63,7 +68,11 @@ Item {
         fontsize: root.fontsize
         toggle: root.toggle
         onClick: {
-            root.click()
+            if(root.click() != false){
+                var value = root.getValue();
+                handler.virtKeyPress(value, Qt.NoModifier, value);
+            }
         }
     }
+    KeyboardHandler { id: handler }
 }

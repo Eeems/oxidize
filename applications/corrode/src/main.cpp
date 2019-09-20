@@ -5,6 +5,7 @@
 #include <QtQuick>
 #include <QQuickView>
 #include "view/mainview.h"
+#include "widget/keyboardhandler.h"
 
 #ifdef __arm__
 Q_IMPORT_PLUGIN(QsgEpaperPlugin)
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
     qputenv("QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS", "rotate=180");
     qputenv("QT_QPA_GENERIC_PLUGINS", "evdevtablet");
 #endif
+    qmlRegisterType<KeyboardHandler>("KeyboardHandler", 1, 0, "KeyboardHandler");
     QGuiApplication app(argc, argv);
     // Load font
     //int id = QFontDatabase::addApplicationFont(":/src/font/Roboto-NotoEmoji-Regular.ttf");
