@@ -5,17 +5,21 @@ Item {
     property string text: ""
 
     property string color: "black"
-    property string backgroundColor: "#22000000"
-    property string borderColor: "#22000000"
-    property string selectedColor: "black"
-    property string selectedBackgroundColor: "white"
-    property string selectedborderColor: "black"
+    property string backgroundColor: "white"
+    property string borderColor: "black"
+    property string selectedColor: "white"
+    property string selectedBackgroundColor: "black"
+    property string selectedborderColor: "white"
+    property int transitionTime: 300
+    property int fontsize: 8
+    property bool toggle: false
     signal click()
     signal hold()
     signal release()
 
 
     property bool isSelected: false
+    property bool isHeld: false
 
     Rectangle {
         width: root.width
@@ -28,18 +32,26 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             onClicked: {
-                console.log("click " + this);
-                root.isSelected = true;
-                timer.start();
+                if(root.toggle){
+                    root.isSelected = !root.isSelected;
+                }else{
+                    root.isSelected = true;
+                    timer.start();
+                }
+                console.log("click (" + this + ") " +  root.isSelected);
                 root.click()
             }
             onPressAndHold: {
-                console.log("hold " + this);
                 root.isSelected = true;
+                root.isHeld = true;
+                console.log("hold " + this);
                 root.hold()
             }
             onReleased: {
-                root.isSelected = false;
+                if(root.isHeld){
+                    root.isSelected = false;
+                }
+                console.log("release (" + this + ")");
                 root.release()
             }
         }
@@ -49,13 +61,15 @@ Item {
         color: root.isSelected ? root.selectedColor : root.color
         text: root.text
         anchors.centerIn: root
+        font.pointSize: fontsize
     }
     Timer {
         id: timer
-        interval: 300
+        interval: root.transitionTime
         repeat: false
         onTriggered: {
             root.isSelected = false;
+            console.log("click clear (" + this + ") " +  root.isSelected);
         }
     }
 }
