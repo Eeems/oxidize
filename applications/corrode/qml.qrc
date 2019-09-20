@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>src/view/main.qml</file>
         <file>src/widget/Button.qml</file>
+        <file>src/widget/Keyboard.qml</file>
+        <file>src/widget/KeyboardKey.qml</file>
+        <file>src/font/Roboto-NotoEmoji-Regular.ttf</file>
     </qresource>
 </RCC>
