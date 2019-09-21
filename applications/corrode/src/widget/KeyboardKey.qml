@@ -3,6 +3,7 @@ import "."
 
 Item {
     id: root
+    clip: true
     property string text: ""
     property string shifttext: text
     property string alttext: text
@@ -18,20 +19,17 @@ Item {
     property string shiftaltmetatext: shiftalttext
     property string shiftctrlmetatext: shiftctrltext
     property string shiftaltctrlmetatext: shiftalttext
+    property bool repeatOnHold: true
+    property int holdInterval: 100
     property int key: 0
     property string value: null
     property int size: 1
     property int basesize: 90
     property int fontsize: 8
     signal click(Item item)
+    signal hold(Item item)
+    signal release(Item item)
     property bool toggle: false
-    function state(){
-        return button.isSelected;
-    }
-    function setState(state){
-        button.isSelected = state;
-    }
-
     width: size * basesize
     height: basesize
     function getText(){
@@ -58,6 +56,39 @@ Item {
         }
         return text;
     }
+    function doClick(){
+        if(root.click(root) !== false){
+            var modifiers = Qt.NoModifier;
+            if(keyboard.hasShift){
+                modifiers = modifiers | Qt.ShiftModifier;
+            }
+            if(keyboard.hasAlt){
+                modifiers = modifiers | Qt.AltModifier;
+            }
+            if(keyboard.hasCtrl){
+                modifiers = modifiers | Qt.ControlModifier;
+            }
+            if(keyboard.hasMeta){
+                modifiers = modifiers | Qt.MetaModifier;
+            }
+            if(root.key > 0){
+                handler.keyPress(root.key, modifiers, root.value);
+            }else{
+                var text = root.getText();
+                if(text.length > 1){
+                    handler.stringPress(text, modifiers, text);
+                }else{
+                    handler.charPress(text, modifiers);
+                }
+            }
+            if(!root.toggle){
+                keyboard.hasShift = false;
+                keyboard.hasAlt = false;
+                keyboard.hasCtrl = false;
+                keyboard.hasMeta =false;
+            }
+        }
+    }
     Button {
         id: button
         text: root.getText()
@@ -69,40 +100,22 @@ Item {
         borderColor: "transparent"
         selectedColor: "black"
         selectedBackgroundColor: "white"
-        selectedborderColor: "white"
+        selectedBorderColor: "white"
         borderwidth: 3
-        onClick: {
-            if(root.click(root) !== false){
-                var modifiers = Qt.NoModifier;
-                if(keyboard.hasShift){
-                    modifiers = modifiers | Qt.ShiftModifier;
-                }
-                if(keyboard.hasAlt){
-                    modifiers = modifiers | Qt.AltModifier;
-                }
-                if(keyboard.hasCtrl){
-                    modifiers = modifiers | Qt.ControlModifier;
-                }
-                if(keyboard.hasMeta){
-                    modifiers = modifiers | Qt.MetaModifier;
-                }
-                if(root.key > 0){
-                    handler.keyPress(root.key, modifiers, root.value);
-                }else{
-                    var text = root.getText();
-                    if(text.length > 1){
-                        handler.stringPress(text, modifiers, text);
-                    }else{
-                        handler.charPress(text, modifiers);
-                    }
-                }
-                if(!root.toggle){
-                    keyboard.hasShift = false;
-                    keyboard.hasAlt = false;
-                    keyboard.hasCtrl = false;
-                    keyboard.hasMeta =false;
-                }
-            }
+        onClick: root.doClick()
+        onHold: {
+            root.hold(this);
+            root.repeatOnHold && timer.start();
         }
+        onRelease: {
+            root.release(this);
+            root.repeatOnHold && timer.stop();
+        }
+    }
+    Timer {
+        id: timer
+        repeat: true
+        interval: root.holdInterval
+        onTriggered: root.doClick()
     }
 }

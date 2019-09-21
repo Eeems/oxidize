@@ -2,14 +2,15 @@ import QtQuick 2.9
 
 Item {
     id: root
+    clip: true
     property string text: ""
 
     property string color: "black"
-    property string backgroundColor: "white"
+    property string backgroundColor: "transparent"
     property string borderColor: "black"
-    property string selectedColor: "white"
+    property string selectedColor: "transparent"
     property string selectedBackgroundColor: "black"
-    property string selectedborderColor: "white"
+    property string selectedBorderColor: "transparent"
     property int transitionTime: 300
     property int fontsize: 8
     property int borderwidth: 5
@@ -23,10 +24,9 @@ Item {
     property bool isHeld: false
 
     Rectangle {
-        width: root.width
-        height: root.height
+        anchors.fill: root
         color: root.isSelected ? root.selectedBackgroundColor : root.backgroundColor
-        border.color: root.isSelected ? root.selectedborderColor : root.borderColor
+        border.color: root.isSelected ? root.selectedBorderColor : root.borderColor
         border.width: borderwidth
         Text {
             id: label

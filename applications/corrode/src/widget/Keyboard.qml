@@ -5,6 +5,7 @@ import "."
 
 Item {
     id: root
+    clip: true
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
@@ -14,6 +15,11 @@ Item {
     property bool hasAlt: false
     property bool hasCtrl: false
     property bool hasMeta: false
+    function hide(){
+        root.visible = false;
+        root.focus = true;
+    }
+
     function each(column, fn){
         for(var i = 0; i < column.children.length; i++){
             var row = column.children[i];
@@ -65,7 +71,7 @@ Item {
                 KeyboardKey { text: "0"; shifttext: "(" }
                 KeyboardKey { text: "-"; shifttext: "_" }
                 KeyboardKey { text: "="; shifttext: "+" }
-                KeyboardKey { text: "⟵"; size: 2; key: Qt.Key_Backspace }
+                KeyboardKey { text: "Backspace"; size: 2; key: Qt.Key_Backspace; fontsize: 6 }
             }
             Row {
                 spacing: parent.spacing
@@ -152,7 +158,7 @@ Item {
                 KeyboardKey { text: "😎" }
                 KeyboardKey { text: "😍" }
                 KeyboardKey { text: "😘" }
-                KeyboardKey { text: "Backspace"; size: 2; key: Qt.Key_Backspace }
+                KeyboardKey { text: "Backspace"; size: 2; key: Qt.Key_Backspace; fontsize: 6 }
             }
             Row {
                 spacing: parent.spacing
@@ -248,20 +254,21 @@ Item {
         //🥱 🤏 🦾 🦿 🦻 🧏 🧏♂️ 🧏♀️ 🧍 🧍♂️ 🧍♀️ 🧎 🧎♂️ 🧎♀️ 👨🦯 👩🦯 👨🦼 👩🦼 👨🦽 👩🦽 🦧 🦮 🐕🦺 🦥 🦦 🦨 🦩 🧄 🧅 🧇 🧆 🧈 🦪 🧃 🧉 🧊 🛕 🦽 🦼 🛺 🪂 🪐 🤿 🪀 🪁 🦺 🥻 🩱 🩲 🩳 🩰 🪕 🪔 🪓 🦯 🩸 🩹 🩺 🪑 🪒 🤎 🤍 🟠 🟡 🟢 🟣 🟤 🟥 🟧 🟨 🟩 🟦 🟪 🟫
     }
     KeyboardKey {
+        id: hideKey
         anchors.bottom: root.bottom
         anchors.left: root.left
-        text: "🔽"
+        text: "⬇️"
         key: Qt.Key_unknown
-        onClick: {
-            root.visible = false;
-            root.focus = true;
-        }
+        repeatOnHold: false
+        onRelease: root.hide()
     }
     KeyboardKey {
+        id: switchKey
         anchors.bottom: root.bottom
         anchors.right: root.right
         text: ["☺️","🔤"][page] || "ABC"
         key: Qt.Key_unknown
+        repeatOnHold: false
         onClick: {
             page++;
             if(page < 0){
