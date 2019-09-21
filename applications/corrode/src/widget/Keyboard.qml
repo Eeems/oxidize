@@ -5,10 +5,15 @@ import "."
 
 Item {
     id: root
-    property int page: 0
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
+    property int page: 0
+    property bool hasCaps: false
+    property bool hasShift: false
+    property bool hasAlt: false
+    property bool hasCtrl: false
+    property bool hasMeta: false
     function each(column, fn){
         for(var i = 0; i < column.children.length; i++){
             var row = column.children[i];
@@ -18,45 +23,19 @@ Item {
         }
     }
     function caps(state){
-        each(qwerty, function(key){
-            key.shift = state;
-        });
+        root.hasCaps = state;
     }
     function shift(state){
-        lshift.setState(state);
-        rshift.setState(state);
-        each(qwerty, function(key){
-            key.shift = caps.state() || state;
-        });
+        root.hasShift = state;
     }
     function ctrl(state){
-        lctrl.setState(state);
-        rctrl.setState(state);
-        each(qwerty, function(key){
-            key.ctrl = state;
-        });
+        root.haCtrl = state;
     }
     function alt(state){
-        lalt.setState(state);
-        ralt.setState(state);
-        each(qwerty, function(key){
-            key.alt = state;
-        });
+        root.hasAlt = state;
     }
     function meta(state){
-        lmeta.setState(state);
-        rmeta.setState(state);
-        each(qwerty, function(key){
-            key.meta = state;
-        });
-    }
-    function click(item){
-        if(!item.toggle){
-            shift(false);
-            alt(false);
-            ctrl(false);
-            meta(false);
-        }
+        root.hasMeta = state;
     }
 
     width: parent.width
@@ -86,7 +65,7 @@ Item {
                 KeyboardKey { text: "0"; shifttext: "(" }
                 KeyboardKey { text: "-"; shifttext: "_" }
                 KeyboardKey { text: "="; shifttext: "+" }
-                KeyboardKey { text: "Backspace"; size: 2; key: Qt.Key_Backspace }
+                KeyboardKey { text: "⟵"; size: 2; key: Qt.Key_Backspace }
             }
             Row {
                 spacing: parent.spacing
@@ -121,7 +100,7 @@ Item {
                 KeyboardKey { text: "l"; shifttext: "L" }
                 KeyboardKey { text: ";"; shifttext: ":" }
                 KeyboardKey { text: "'"; shifttext: "\"" }
-                KeyboardKey { text: "Enter"; size: 2; key: Qt.Key_Enter }
+                KeyboardKey { text: "↩"; size: 2; key: Qt.Key_Enter }
             }
             Row {
                 spacing: parent.spacing
@@ -210,7 +189,7 @@ Item {
                 KeyboardKey { text: "😞" }
                 KeyboardKey { text: "😟" }
                 KeyboardKey { text: "😢" }
-                KeyboardKey { text: "Enter"; size: 2; key: Qt.Key_Enter }
+                KeyboardKey { text: "↩"; size: 2; key: Qt.Key_Enter }
             }
             Row {
                 spacing: parent.spacing
@@ -281,7 +260,7 @@ Item {
     KeyboardKey {
         anchors.bottom: root.bottom
         anchors.right: root.right
-        text: ["☺️","🔤"][page]
+        text: ["☺️","🔤"][page] || "ABC"
         key: Qt.Key_unknown
         onClick: {
             page++;

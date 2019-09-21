@@ -26,7 +26,7 @@ Item {
     Row {
         Button {
             id: upButton
-            text: ".."
+            text: "🔙"
             width: 100
             height: 100
             onClick: {
