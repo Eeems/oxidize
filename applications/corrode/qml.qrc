@@ -5,5 +5,7 @@
         <file>src/widget/Keyboard.qml</file>
         <file>src/widget/KeyboardKey.qml</file>
         <file>src/font/Roboto-NotoEmoji-Regular.ttf</file>
+        <file>src/widget/File.qml</file>
+        <file>src/widget/FileList.qml</file>
     </qresource>
 </RCC>
