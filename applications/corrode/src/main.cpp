@@ -41,12 +41,17 @@ int main(int argc, char *argv[]) {
     context->setContextProperty("screenGeometry", app.primaryScreen()->geometry());
     context->setContextProperty("cwd", "/");
     view.setSource(QUrl(QStringLiteral("qrc:/src/view/main.qml")));
+    QQuickItem* root = view.rootObject();
+    if(root->children().isEmpty()){
+        qDebug() << "Nothing to display";
+        return 1;
+    }
     // Allow quitting
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
     // Start
     view.show();
     qDebug() << "view shown";
-    KeyboardHandler* keyboard = view.rootObject()->findChild<KeyboardHandler*>("keyboard");
+    KeyboardHandler* keyboard = root->findChild<KeyboardHandler*>("keyboard");
     if(!keyboard){
         qDebug() << "No keyboard handler";
         return 1;

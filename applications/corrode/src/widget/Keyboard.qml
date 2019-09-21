@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.9
 import KeyboardHandler 1.0
 import "."
 
@@ -40,14 +40,14 @@ Item {
     }
 
     width: parent.width
-    height: 500
+    height: 480
     MouseArea { anchors.fill: root }
     Rectangle {
         color: "black"
         anchors.fill: root
         Column {
             id: rows
-            anchors.fill: parent
+            anchors.centerIn: parent
             spacing: 4
             Row {
                 spacing: parent.spacing
@@ -70,7 +70,7 @@ Item {
             Row {
                 spacing: parent.spacing
                 anchors.horizontalCenter: parent.horizontalCenter
-                KeyboardKey { text: "⇆\nTab"; size: 2 }
+                KeyboardKey { text: "Tab"; size: 1 }
                 KeyboardKey { text: "q"; shifttext: "Q" }
                 KeyboardKey { text: "w"; shifttext: "W" }
                 KeyboardKey { text: "e"; shifttext: "E" }
