@@ -17,7 +17,6 @@ const char *qt_version = qVersion();
 int main(int argc, char *argv[]) {
     if (strcmp(qt_version, QT_VERSION_STR) != 0){
         qDebug() << "Version mismatch, Runtime: " << qt_version << ", Build: " << QT_VERSION_STR;
-//        return 1;
     }
 #ifdef __arm__
     // Setup epaper
@@ -25,6 +24,7 @@ int main(int argc, char *argv[]) {
     qputenv("QT_QPA_PLATFORM", "epaper:enable_fonts");
     qputenv("QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS", "rotate=180");
     qputenv("QT_QPA_GENERIC_PLUGINS", "evdevtablet");
+//    qputenv("QT_DEBUG_BACKINGSTORE", "1");
 #endif
     qmlRegisterType<KeyboardHandler>("KeyboardHandler", 1, 0, "KeyboardHandler");
     QGuiApplication app(argc, argv);
