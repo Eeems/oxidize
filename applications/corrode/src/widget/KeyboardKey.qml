@@ -24,10 +24,6 @@ Item {
     property int basesize: 90
     property int fontsize: 8
     signal click(Item item)
-    property bool shift: false
-    property bool alt: false
-    property bool ctrl: false
-    property bool meta: false
     property bool toggle: false
     function state(){
         return button.isSelected;
@@ -39,25 +35,25 @@ Item {
     width: size * basesize
     height: basesize
     function getText(){
-        if(shift && alt && ctrl){
+        if(keyboard.hasShift && keyboard.hasAlt && keyboard.hasCtrl){
             return shiftaltctrltext;
         }
-        if(shift && alt){
+        if(keyboard.hasShift && keyboard.hasAlt){
             return shiftalttext;
         }
-        if(shift && ctrl){
+        if(keyboard.hasShift && keyboard.hasCtrl){
             return shiftctrltext;
         }
-        if(alt && ctrl){
+        if(keyboard.hasAlt && keyboard.hasCtrl){
             return altctrltext;
         }
-        if(shift){
+        if(keyboard.hasShift){
             return shifttext;
         }
-        if(alt){
+        if(keyboard.hasAlt){
             return alttext;
         }
-        if(ctrl){
+        if(keyboard.hasCtrl){
             return ctrltext;
         }
         return text;
@@ -78,29 +74,34 @@ Item {
         onClick: {
             if(root.click(root) !== false){
                 var modifiers = Qt.NoModifier;
-                if(root.shift){
+                if(keyboard.hasShift){
                     modifiers = modifiers | Qt.ShiftModifier;
                 }
-                if(root.alt){
+                if(keyboard.hasAlt){
                     modifiers = modifiers | Qt.AltModifier;
                 }
-                if(root.ctrl){
+                if(keyboard.hasCtrl){
                     modifiers = modifiers | Qt.ControlModifier;
                 }
-                if(root.meta){
+                if(keyboard.hasMeta){
                     modifiers = modifiers | Qt.MetaModifier;
                 }
                 if(root.key > 0){
                     handler.keyPress(root.key, modifiers, root.value);
                 }else{
                     var text = root.getText();
-                    if(text.length > 0){
+                    if(text.length > 1){
                         handler.stringPress(text, modifiers, text);
                     }else{
                         handler.charPress(text, modifiers);
                     }
                 }
-                keyboard.click(root)
+                if(!root.toggle){
+                    keyboard.hasShift = false;
+                    keyboard.hasAlt = false;
+                    keyboard.hasCtrl = false;
+                    keyboard.hasMeta =false;
+                }
             }
         }
     }
