@@ -40,3 +40,8 @@ INCLUDEPATH += $$PWD/../docker-toolchain/qtcreator/files
 DEPENDPATH += $$PWD/../docker-toolchain/qtcreator/files
 
 unix:!macx: LIBS += -lqsgepaper
+
+unix:!macx: LIBS += -L$$PWD/../../docker-toolchain/qtcreator/files/libraries/ -lepaper
+
+INCLUDEPATH += $$PWD/../../docker-toolchain/qtcreator/files/libraries
+DEPENDPATH += $$PWD/../../docker-toolchain/qtcreator/files/libraries
