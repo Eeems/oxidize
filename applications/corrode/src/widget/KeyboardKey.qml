@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.9
 import "."
 
 Item {
@@ -66,6 +66,13 @@ Item {
         anchors.fill: parent
         fontsize: root.fontsize
         toggle: root.toggle
+        color: "white"
+        backgroundColor: "black"
+        borderColor: "black"
+        selectedColor: "blac"
+        selectedBackgroundColor: "white"
+        selectedborderColor: "white"
+        borderwidth: 3
         onClick: {
             if(root.click() != false){
                 var value = root.getValue();

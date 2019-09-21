@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.9
 
 Item {
     id: root
@@ -12,6 +12,7 @@ Item {
     property string selectedborderColor: "white"
     property int transitionTime: 300
     property int fontsize: 8
+    property int borderwidth: 5
     property bool toggle: false
     signal click()
     signal hold()
@@ -24,44 +25,43 @@ Item {
     Rectangle {
         width: root.width
         height: root.height
-        anchors.centerIn: root
         color: root.isSelected ? root.selectedBackgroundColor : root.backgroundColor
         border.color: root.isSelected ? root.selectedborderColor : root.borderColor
-        border.width: 5
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onClicked: {
-                if(root.toggle){
-                    root.isSelected = !root.isSelected;
-                }else{
-                    root.isSelected = true;
-                    timer.start();
-                }
-                console.log("click (" + this + ") " +  root.isSelected);
-                root.click()
-            }
-            onPressAndHold: {
-                root.isSelected = true;
-                root.isHeld = true;
-                console.log("hold " + this);
-                root.hold()
-            }
-            onReleased: {
-                if(root.isHeld){
-                    root.isSelected = false;
-                }
-                console.log("release (" + this + ")");
-                root.release()
-            }
+        border.width: borderwidth
+        Text {
+            id: label
+            color: root.isSelected ? root.selectedColor : root.color
+            text: root.text
+            anchors.centerIn: parent
+            font.pointSize: fontsize
         }
     }
-    Text {
-        id: label
-        color: root.isSelected ? root.selectedColor : root.color
-        text: root.text
-        anchors.centerIn: root
-        font.pointSize: fontsize
+    MouseArea {
+        anchors.fill: root
+        hoverEnabled: true
+        onClicked: {
+            if(root.toggle){
+                root.isSelected = !root.isSelected;
+            }else{
+                root.isSelected = true;
+                timer.start();
+            }
+            console.log("click (" + this + ") " +  root.isSelected);
+            root.click()
+        }
+        onPressAndHold: {
+            root.isSelected = true;
+            root.isHeld = true;
+            console.log("hold " + this);
+            root.hold()
+        }
+        onReleased: {
+            if(root.isHeld){
+                root.isSelected = false;
+            }
+            console.log("release (" + this + ")");
+            root.release()
+        }
     }
     Timer {
         id: timer
