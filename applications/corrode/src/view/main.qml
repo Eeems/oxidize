@@ -6,7 +6,7 @@ import "../widget"
 
 Item {
     id: root
-    visible: visible
+    visible: true
     width: screenGeometry.width
     height: screenGeometry.height
     Timer {

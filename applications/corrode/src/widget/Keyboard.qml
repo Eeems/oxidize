@@ -260,7 +260,7 @@ Item {
         text: "⬇️"
         key: Qt.Key_unknown
         repeatOnHold: false
-        onRelease: root.hide()
+        onClick: root.hide()
     }
     KeyboardKey {
         id: switchKey
