@@ -5,7 +5,6 @@
 #include <QtQuick>
 #include <QQuickView>
 #include <QList>
-#include <QtQuickControls2/QtQuickControls2>
 #include "view/mainview.h"
 #include "widget/keyboardhandler.h"
 
@@ -38,7 +37,7 @@ int main(int argc, char *argv[]) {
     // Load QML
     QQmlApplicationEngine engine;
     MainView view(&engine);
-    QQmlContext *context = view.rootContext();
+    QQmlContext* context = view.rootContext();
     context->setContextProperty("screenGeometry", app.primaryScreen()->geometry());
     context->setContextProperty("cwd", "/");
     view.setSource(QUrl(QStringLiteral("qrc:/src/view/main.qml")));
@@ -51,7 +50,7 @@ int main(int argc, char *argv[]) {
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
     // Start
     view.show();
-    qDebug() << "view shown";
+    qDebug() << "View shown";
     KeyboardHandler* keyboard = root->findChild<KeyboardHandler*>("keyboard");
     if(!keyboard){
         qDebug() << "No keyboard handler";
