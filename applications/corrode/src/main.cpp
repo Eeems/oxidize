@@ -5,6 +5,7 @@
 #include <QtQuick>
 #include <QQuickView>
 #include <QList>
+#include <QtQuickControls2/QtQuickControls2>
 #include "view/mainview.h"
 #include "widget/keyboardhandler.h"
 

@@ -1,6 +1,7 @@
 import QtQuick 2.6
-import QtQuick.Window 2.0
-import Qt.labs.folderlistmodel 1.0
+import QtQuick.Window 2.3
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.3
 import "../widget"
 
 Item {
@@ -16,27 +17,78 @@ Item {
             Qt.quit();
         }
     }
-    FileList {
-        id: fileList
-        cwd: "/"
+    Item {
+        id: mainArea
         anchors.top: topbar.bottom
         anchors.bottom: root.bottom
         anchors.left: root.left
         anchors.right: root.right
         width: screenGeometry.width
         height: root.height - topbar.height
-        onFileClick: function(file) {
-            if(file.isDir){
-                pathInput.clear();
-                pathInput.text = file.path;
-                fileList.cwd = file.path
-                console.log("chdir " + cwd);
-            }else{
-                console.log("open " + file.path);
+        FileList {
+            id: fileList
+            cwd: "/"
+            enabled: this.visible
+            anchors.fill: parent
+            onScrollStart: keyboard.hide()
+            onFileClick: function(file) {
+                if(file.isDir){
+                    pathInput.clear();
+                    pathInput.text = file.path;
+                    fileList.cwd = file.path
+                    console.log("chdir " + cwd);
+                }else{
+                    fileInfo.load(file);
+                }
+            }
+            onFileLongPress: function(file){
+                fileInfo.load(file);
             }
         }
-        onScrollStart: keyboard.hide()
-        onTouchStart: keyboard.hide()
+        Rectangle {
+            id: fileInfo
+            visible: false
+            enabled: this.visible
+            anchors.fill: parent
+            color: "white"
+            function load(file){
+                filePath.text = "Path: " + file.path;
+                fileUrl.text = "Url: " + file.url;
+                fileSize.text = "Size: " + file.humanSize;
+                fileModified.text = "Last Modified: " + file.modified;
+                fileAccessed.text = "Last Accessed: " + file.accessed;
+                this.visible = true;
+            }
+            MouseArea { anchors.fill: parent }
+            ColumnLayout {
+                anchors.fill: parent
+                Text {
+                    id: filePath
+                    text: ""
+                    Layout.alignment: Qt.AlignCenter
+                }
+                Text {
+                    id: fileUrl
+                    text: ""
+                    Layout.alignment: Qt.AlignCenter
+                }
+                Text {
+                    id: fileSize
+                    text: ""
+                    Layout.alignment: Qt.AlignCenter
+                }
+                Text {
+                    id: fileModified
+                    text: ""
+                    Layout.alignment: Qt.AlignCenter
+                }
+                Text {
+                    id: fileAccessed
+                    text: ""
+                    Layout.alignment: Qt.AlignCenter
+                }
+            }
+        }
     }
     Rectangle {
         id: topbar
@@ -57,6 +109,11 @@ Item {
             selectedBackgroundColor: "white"
             selectedBorderColor: "transparent"
             onClick: {
+                if(fileInfo.visible){
+                    fileInfo.visible = false;
+                    fileList.visible  = true;
+                    return;
+                }
                 if(fileList.cwd === "/"){
                     root.visible = false;
                     quitTimer.start();
@@ -91,13 +148,13 @@ Item {
                 this.focus = false
             }
         }
-    }
-    Rectangle {
-        color: "white"
-        x: parseInt(pathInput.x + pathInput.leftPadding)
-        y: parseInt(pathInput.y + pathInput.height - pathInput.bottomPadding)
-        width: parseInt(pathInput.width - pathInput.leftPadding - pathInput.rightPadding)
-        height: 1
+        Rectangle {
+            color: "white"
+            x: parseInt(pathInput.x + pathInput.leftPadding)
+            y: parseInt(pathInput.y + pathInput.height - pathInput.bottomPadding)
+            width: parseInt(pathInput.width - pathInput.leftPadding - pathInput.rightPadding)
+            height: 1
+        }
     }
     Keyboard { id: keyboard; visible: false }
 }
