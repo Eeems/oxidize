@@ -24,13 +24,14 @@ Item {
     property bool isHeld: false
 
     Rectangle {
+        id: background
         anchors.fill: root
-        color: root.isSelected ? root.selectedBackgroundColor : root.backgroundColor
-        border.color: root.isSelected ? root.selectedBorderColor : root.borderColor
+        color: root.backgroundColor
+        border.color: root.borderColor
         border.width: borderwidth
         Text {
             id: label
-            color: root.isSelected ? root.selectedColor : root.color
+            color: root.color
             text: root.text
             anchors.centerIn: parent
             font.pointSize: fontsize
@@ -56,16 +57,51 @@ Item {
             root.hold()
         }
         onReleased: {
-            if(root.isHeld){
-                root.isSelected = false;
+            if(root.isSelected){
+                if(root.isHeld){
+                    root.isSelected = false;
+                }
+                console.log("release (" + this + ")");
+                root.release()
             }
-            console.log("release (" + this + ")");
-            root.release()
         }
     }
+    state: "resting"
+    states: [
+        State { name: "resting"; when: !root.isSelected },
+        State { name: "pressed"; when: root.isSelected }
+    ]
+    transitions: [
+        Transition {
+            from: "resting"
+            to: "pressed"
+            SequentialAnimation {
+                PropertyAction { target: label; property: "color"; value: root.color }
+                PropertyAction { target: background; property: "color"; value: root.backgroundColor }
+                PropertyAction { target: background; property: "border.color"; value: root.borderColor }
+                PauseAnimation { duration: root.transitionTime }
+                PropertyAction { target: label; property: "color"; value: root.selectedColor }
+                PropertyAction { target: background; property: "color"; value: root.selectedBackgroundColor }
+                PropertyAction { target: background; property: "border.color"; value: root.selectedBorderColor }
+            }
+        },
+        Transition {
+            from: "pressed"
+            to: "resting"
+            SequentialAnimation {
+                PropertyAction { target: label; property: "color"; value: root.selectedColor }
+                PropertyAction { target: background; property: "color"; value: root.selectedBackgroundColor }
+                PropertyAction { target: background; property: "border.color"; value: root.selectedBorderColor }
+                PauseAnimation { duration: root.transitionTime }
+                PropertyAction { target: label; property: "color"; value: root.color }
+                PropertyAction { target: background; property: "color"; value: root.backgroundColor }
+                PropertyAction { target: background; property: "border.color"; value: root.borderColor }
+            }
+        }
+    ]
     Timer {
         id: timer
-        interval: root.transitionTime
+        interval: 1
         repeat: false
         onTriggered: {
             root.isSelected = false;
