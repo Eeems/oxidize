@@ -77,11 +77,11 @@ Item {
     }
     ListView {
         id: fileList
-        clip: true
         visible: fileModel.count > 0
         width: root.width
         height: root.height - fileListHeader.height
         anchors.top: fileListHeader.bottom
+        clip: true
         snapMode: ListView.SnapOneItem
         maximumFlickVelocity: 0
         boundsBehavior: Flickable.StopAtBounds
