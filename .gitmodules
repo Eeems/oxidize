@@ -1,0 +1,3 @@
+[submodule "applications/plato"]
+	path = applications/plato
+	url = git@github.com:Eeems/plato.git
