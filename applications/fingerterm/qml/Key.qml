@@ -39,7 +39,7 @@ Rectangle {
 
     width: window.width/12   // some default
     height: window.height/8 < 55*window.pixelRatio ? window.height/8 : 55*window.pixelRatio
-    color: label=="" ? "transparent" : (isClick || keyPressHighlight.running ? keyboard.keyHilightBgColor : keyboard.keyBgColor)
+    color: label=="" ? "transparent" : (isClick || keyboard.keyBgColor)
     border.color: label=="" ? "transparent" : keyboard.keyBorderColor
     border.width: 1
     radius: window.radiusSmall
@@ -120,7 +120,7 @@ Rectangle {
         util.keyPressFeedback();
 
         keyRepeatStarter.start();
-        keyPressHighlight.restart()
+//        keyPressHighlight.restart()
 
         if (sticky) {
             keyboard.keyModifiers |= code;
@@ -197,10 +197,10 @@ Rectangle {
         }
     }
 
-    Timer {
-        id: keyPressHighlight
-        interval: keyboard.feedbackDuration
-    }
+//    Timer {
+//        id: keyPressHighlight
+//        interval: keyboard.feedbackDuration
+//    }
 
     function setStickiness(val)
     {
