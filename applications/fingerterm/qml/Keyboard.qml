@@ -27,10 +27,10 @@ Item {
     property Key currentStickyPressed
     property Key currentKeyPressed
 
-    property string keyFgColor: "#ffffff"
-    property string keyBgColor: "#202020"
+    property string keyFgColor: "white"
+    property string keyBgColor: "black"
     property string keyHilightBgColor: "#ffffff"
-    property string keyBorderColor: "#303030"
+    property string keyBorderColor: "white"
 
 //    property int feedbackDuration: 150
 
@@ -46,6 +46,7 @@ Item {
 
     Component {
         id: keyboardContents
+
 
         Column {
             id: col

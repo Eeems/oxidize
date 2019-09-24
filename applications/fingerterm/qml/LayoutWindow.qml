@@ -31,13 +31,13 @@ PopupWindow {
             width: parent.width
             height: selectButton.height+4*window.pixelRatio
             border.width: 1
-            border.color: "#ffffff"
+            border.color:  "#ffffff"
             radius: window.radiusSmall
             clip: true
 
             Text {
                 text: modelData
-                color: "#ffffff"
+                color:  "#ffffff"
                 anchors.verticalCenter: parent.verticalCenter
                 x: 8*window.pixelRatio
                 width: selectButton.x - x
@@ -64,7 +64,7 @@ PopupWindow {
         id: titleText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        color: "#ffffff"
+        color:  "#ffffff"
         text: "Keyboard layout"
         font.pointSize: window.uiFontSize + 4*window.pixelRatio;
     }

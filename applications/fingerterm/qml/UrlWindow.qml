@@ -31,13 +31,13 @@ PopupWindow {
             width: parent.width
             height: openButton.height+(4*window.pixelRatio)
             border.width: 1
-            border.color: "#ffffff"
+            border.color:  "#ffffff"
             radius: window.radiusSmall
             clip: true
 
             Text {
                 text: modelData
-                color: "#ffffff"
+                color:  "#ffffff"
                 anchors.verticalCenter: parent.verticalCenter
                 x: 8*window.pixelRatio
                 width: openButton.x - x
@@ -72,7 +72,7 @@ PopupWindow {
     Text {
         visible: urlWindow.urls.length == 0
         anchors.centerIn: parent
-        color: "#ffffff"
+        color:  "#ffffff"
         text: "No URLs"
         font.pointSize: window.uiFontSize + 4*window.pixelRatio
     }

@@ -37,8 +37,8 @@ Item {
         id: page
 
         property int orientation: forceOrientation ? forcedOrientation : Screen.orientation
-        property bool forceOrientation: util.orientationMode != Util.OrientationAuto
-        property int forcedOrientation: util.orientationMode == Util.OrientationLandscape ? Qt.LandscapeOrientation
+        property bool forceOrientation: util.orientationMode !== Util.OrientationAuto
+        property int forcedOrientation: util.orientationMode === Util.OrientationLandscape ? Qt.LandscapeOrientation
                                                                                           : Qt.PortraitOrientation
         property bool portrait: rotation % 180 == 0
 
@@ -133,7 +133,7 @@ Item {
                 }
                 onUpdated: {
                     touchPoints.forEach(function (touchPoint) {
-                        if (multiTouchArea.firstTouchId == touchPoint.pointId) {
+                        if (multiTouchArea.firstTouchId === touchPoint.pointId) {
                             //gestures c++ handler
                             textrender.mouseMove(touchPoint.x, touchPoint.y);
                         }
@@ -148,7 +148,7 @@ Item {
                 }
                 onReleased: {
                     touchPoints.forEach(function (touchPoint) {
-                        if (multiTouchArea.firstTouchId == touchPoint.pointId) {
+                        if (multiTouchArea.firstTouchId === touchPoint.pointId) {
                             // Toggle keyboard wake-up when tapping outside the keyboard, but:
                             //   - only when not scrolling (y-diff < 20 pixels)
                             if (touchPoint.y < vkb.y && touchPoint.startY < vkb.y &&
@@ -209,7 +209,7 @@ Item {
                 height: parent.height-vkb.mainHeight
                 width: parent.width
                 fontPointSize: util.fontSize
-                opacity: (util.keyboardMode == Util.KeyboardFade && vkb.active) ? 0.3
+                opacity: (util.keyboardMode === Util.KeyboardFade && vkb.active) ? 0.3
                                                                                 : 1.0
                 allowGestures: !vkb.active && !menu.showing /*&& !urlWindow.show*/ && !aboutDialog.show && !layoutWindow.show
 
@@ -264,7 +264,7 @@ Item {
                 id: textNotify
 
                 anchors.centerIn: parent
-                color: "#ffffff"
+                color:  "#ffffff"
                 opacity: 0
                 font.pointSize: 40*window.pixelRatio
 
