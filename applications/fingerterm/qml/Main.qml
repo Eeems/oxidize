@@ -211,7 +211,7 @@ Item {
                 fontPointSize: util.fontSize
                 opacity: (util.keyboardMode == Util.KeyboardFade && vkb.active) ? 0.3
                                                                                 : 1.0
-                allowGestures: !vkb.active && !menu.showing && !urlWindow.show && !aboutDialog.show && !layoutWindow.show
+                allowGestures: !vkb.active && !menu.showing /*&& !urlWindow.show*/ && !aboutDialog.show && !layoutWindow.show
 
                 Behavior on opacity {
                     NumberAnimation { duration: textrender.duration; easing.type: Easing.InOutQuad }
@@ -301,9 +301,9 @@ Item {
                 id: errorDialog
             }
 
-            UrlWindow {
-                id: urlWindow
-            }
+//            UrlWindow {
+//                id: urlWindow
+//            }
 
             LayoutWindow {
                 id: layoutWindow
