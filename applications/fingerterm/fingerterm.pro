@@ -18,7 +18,7 @@ isEmpty(DEFAULT_FONT) {
     DEFAULT_FONT = NotoMono
 }
 
-DEPLOYMENT_PATH = /usr/share/$$TARGET
+DEPLOYMENT_PATH = /opt/usr/share/$$TARGET
 DEFINES += DEPLOYMENT_PATH=\\\"$$DEPLOYMENT_PATH\\\"
 DEFINES += DEFAULT_FONTFAMILY=\\\"$$DEFAULT_FONT\\\"
 
@@ -83,7 +83,7 @@ userdata.files = data/menu.xml \
 userdata.path = $$DEPLOYMENT_PATH/data
 INSTALLS += userdata
 
-target.path = /usr/bin
+target.path = /opt/usr/bin
 INSTALLS += target
 
 contains(MEEGO_EDITION,nemo) {
