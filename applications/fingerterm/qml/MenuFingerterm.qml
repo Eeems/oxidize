@@ -167,7 +167,7 @@ Item {
                                 Text {
                                     width: window.buttonWidthLarge
                                     height: window.headerHeight
-                                    color: "#ffffff"
+                                    color:  "#ffffff"
                                     font.pointSize: window.uiFontSize-1
                                     text: "Font size"
                                     horizontalAlignment: Text.AlignHCenter
@@ -206,7 +206,7 @@ Item {
                                 Text {
                                     width: window.buttonWidthLarge
                                     height: window.headerHeight
-                                    color: "#ffffff"
+                                    color:  "#ffffff"
                                     font.pointSize: window.uiFontSize-1
                                     text: "UI Orientation"
                                     horizontalAlignment: Text.AlignHCenter
@@ -248,7 +248,7 @@ Item {
                                 Text {
                                     width: window.buttonWidthLarge
                                     height: window.headerHeight
-                                    color: "#ffffff"
+                                    color:  "#ffffff"
                                     font.pointSize: window.uiFontSize-1
                                     text: "Drag mode"
                                     horizontalAlignment: Text.AlignHCenter
@@ -301,7 +301,7 @@ Item {
 //                                Text {
 //                                    width: window.buttonWidthLarge
 //                                    height: window.headerHeight
-//                                    color: "#ffffff"
+//                                    color:  "#ffffff"
 //                                    font.pointSize: window.uiFontSize-1
 //                                    text: "VKB behavior"
 //                                    horizontalAlignment: Text.AlignHCenter
@@ -343,13 +343,13 @@ Item {
 //                                }
 //                            }
 //                        }
-                        Button {
-                            text: "New window"
-                            onClicked: {
-                                menuWin.showing = false;
-                                util.openNewWindow();
-                            }
-                        }
+//                        Button {
+//                            text: "New window"
+//                            onClicked: {
+//                                menuWin.showing = false;
+//                                util.openNewWindow();
+//                            }
+//                        }
 //                        Button {
 //                            text: "VKB layout..."
 //                            onClicked: {
@@ -388,7 +388,7 @@ Item {
 //                    Text {
 //                        width: parent.width
 //                        height: window.headerHeight
-//                        color: "#ffffff"
+//                        color:  "#ffffff"
 //                        font.pointSize: window.uiFontSize-1
 //                        text: "VKB delay: " + vkbDelaySlider.keyboardFadeOutDelay + " ms"
 //                        horizontalAlignment: Text.AlignHCenter

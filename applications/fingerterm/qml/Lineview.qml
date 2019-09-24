@@ -54,7 +54,7 @@ Rectangle {
         width: cursorWidth
         height: cursorHeight
         color: "transparent"
-        border.color: "#ffffff"
+        border.color:  "#ffffff"
         border.width: 1
     }
 
@@ -73,7 +73,7 @@ Rectangle {
                 height: fontHeightHack.height
                 width: lineTextCol.width
                 Text {
-                    color: "#ffffff"
+                    color:  "#ffffff"
                     font.family: util.fontFamily
                     font.pointSize: lineView.fontPointSize
                     text: modelData

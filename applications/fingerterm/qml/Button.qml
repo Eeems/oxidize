@@ -23,7 +23,7 @@ Rectangle {
     id: button
 
     property string text
-    property string textColor: "#ffffff"
+    property string textColor:  "#ffffff"
     property bool enabled: true
     property bool highlighted
 
@@ -32,7 +32,7 @@ Rectangle {
 
     signal clicked()
 
-    color: btnMouseArea.pressed ? "#ffffff"
+    color: btnMouseArea.pressed ?  "#ffffff"
                                 : highlighted ? "#606060" : "#202020"
     border.color: "#303030"
     border.width: 1
