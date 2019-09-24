@@ -227,14 +227,14 @@ Item {
                 }
             }
 
-            Timer {
-                id: fadeTimer
+//            Timer {
+//                id: fadeTimer
 
-                interval: util.keyboardFadeOutDelay
-                onTriggered: {
-                    //window.sleepVKB();
-                }
-            }
+//                interval: util.keyboardFadeOutDelay
+//                onTriggered: {
+//                    window.sleepVKB();
+//                }
+//            }
 
             Timer {
                 id: bellTimer
@@ -325,7 +325,7 @@ Item {
                     return;
 
                 textrender.duration = window.fadeOutTime;
-                fadeTimer.restart();
+//                fadeTimer.restart();
                 vkb.active = true;
                 setTextRenderAttributes();
             }
@@ -381,11 +381,13 @@ Item {
             }
 
             Component.onCompleted: {
-                if (util.showWelcomeScreen)
+                if (util.showWelcomeScreen){
                     aboutDialog.show = true
+                }
                 if (startupErrorMessage != "") {
                     showErrorMessage(startupErrorMessage)
                 }
+                wakeVKB();
             }
 
             function showErrorMessage(string)
