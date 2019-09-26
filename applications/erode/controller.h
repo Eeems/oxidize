@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QQmlApplicationEngine>
 #include "controller.h"
 
 class Controller : public QObject
@@ -8,7 +9,18 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    explicit Controller(QObject* parent = 0) : QObject(parent){}
+    explicit Controller(QQmlApplicationEngine* engine) : QObject(nullptr), _engine(engine){
+        _sortBy = "name";
+    }
     Q_INVOKABLE QList<QObject*> getTasks();
+    Q_INVOKABLE void sortBy(QString key);
 
+
+signals:
+    void sortByChanged();
+
+private:
+    int is_uint(std::string input);
+    QString _sortBy;
+    QQmlApplicationEngine* _engine;
 };
