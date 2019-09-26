@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     QQmlContext* context = engine.rootContext();
-    Controller controller;
+    Controller controller(&engine);
     context->setContextProperty("screenGeometry", app.primaryScreen()->geometry());
     context->setContextProperty("tasks", QVariant::fromValue(controller.getTasks()));
     context->setContextProperty("controller", &controller);

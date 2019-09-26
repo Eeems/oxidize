@@ -8,22 +8,20 @@
 class TaskItem : public QObject {
     Q_OBJECT
 public:
-    explicit TaskItem(int pid);
+    explicit TaskItem(std::string pid);
     Q_PROPERTY(QString name MEMBER _name NOTIFY nameChanged)
-    Q_PROPERTY(QString path MEMBER _path NOTIFY pathChanged)
-    Q_PROPERTY(int pid MEMBER _pid NOTIFY pidChanged)
+    Q_PROPERTY(QString pid MEMBER _pid NOTIFY pidChanged)
     bool ok();
     std::string getprop(std::string name);
 
 signals:
     void nameChanged();
-    void pathChanged();
     void pidChanged();
 
 private:
     QString _name;
     QString _path;
-    int _pid;
+    QString _pid;
 };
 
 #endif // TASKITEM_H
