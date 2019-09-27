@@ -2,6 +2,7 @@
 #include <QtDBus>
 #include <iostream>
 #include <fstream>
+#include "controller.h"
 
 const char* confpath = "/etc/dbus-1/system.d/codes.eeems.abrade.conf";
 
@@ -16,7 +17,7 @@ int main(int argc, char *argv[]){
         QFile infile(QString(":/codes.eeems.abrade.conf"));
         if(!infile.open(QIODevice::ReadOnly)) {
             qWarning("Unable to open dbus configuration file");
-            return -1;
+            return EXIT_FAILURE;
         }
         std::string data = infile.readAll().toStdString();
         std::ofstream outfile;
@@ -28,22 +29,26 @@ int main(int argc, char *argv[]){
     }
     QDBusConnection bus = QDBusConnection::systemBus();
     if(!bus.isConnected()){
-        qWarning("Cannot connect to the D-Bus system bus.\n"
-                 "Please check your system settings and try again.\n");
-        return -1;
+        qWarning("Failed to connect to system bus.");
+        return EXIT_FAILURE;
     }
+
+    QDBusMessage message = QDBusMessage::createSignal("/", "codes.eeems.abrade", "ping");
+    message << "Hello Word!";
+    bus.send(message);
+
+    new Controller(&app);
+    if(!bus.registerObject("/", &app)){
+        qWarning("Failed to register object");
+    }
+    // Register service
     QDBusConnectionInterface* interface = bus.interface();
     QDBusReply<QDBusConnectionInterface::RegisterServiceReply> reply = interface->registerService("codes.eeems.abrade");
     if(!reply.isValid()){
         QDBusError ex = reply.error();
         qWarning(ex.message().toStdString().c_str());
-        return -1;
+        return EXIT_FAILURE;
     }
-
-
-    QStringList serviceNames = interface->registeredServiceNames();
-    qDebug() << serviceNames;
-
+    qDebug() << "Successfully registered code.eeems.abrade service";
     return app.exec();
-    return 0;
 }
