@@ -1,5 +1,11 @@
 <RCC>
-    <qresource>
+    <qresource prefix="/">
         <file>codes.eeems.abrade.conf</file>
+        <file>main.qml</file>
+        <file>Button.qml</file>
+        <file>File.qml</file>
+        <file>FileList.qml</file>
+        <file>Keyboard.qml</file>
+        <file>KeyboardKey.qml</file>
     </qresource>
 </RCC>

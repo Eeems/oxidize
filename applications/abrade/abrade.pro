@@ -1,7 +1,7 @@
-QT -= gui
+QT += quick
 QT += dbus
 
-CONFIG += c++11 console
+CONFIG += c++11
 CONFIG -= app_bundle
 
 # The following define makes your compiler emit warnings if you use
@@ -16,7 +16,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += main.cpp \
-    controller.cpp
+    controller.cpp \
+    eventdevice.cpp \
+    view.cpp \
+    keyboard.cpp
 
 TARGET=abrade
 
@@ -29,4 +32,14 @@ RESOURCES += \
     resources.qrc
 
 HEADERS += \
-    controller.h
+    controller.h \
+    eventdevice.h \
+    view.h \
+    keyboard.h
+
+INCLUDEPATH += $$PWD/../../docker-toolchain/qtcreator/files/libraries
+DEPENDPATH += $$PWD/../../docker-toolchain/qtcreator/files/libraries
+
+linux-oe-g++ {
+    LIBS += -lqsgepaper
+}
