@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     controller.cpp \
     eventdevice.cpp \
     view.cpp \
-    keyboard.cpp
+    keyboard.cpp \
+    evdev.cpp
 
 TARGET=abrade
 
@@ -35,10 +36,8 @@ HEADERS += \
     controller.h \
     eventdevice.h \
     view.h \
-    keyboard.h
-
-INCLUDEPATH += $$PWD/../../docker-toolchain/qtcreator/files/libraries
-DEPENDPATH += $$PWD/../../docker-toolchain/qtcreator/files/libraries
+    keyboard.h \
+    evdev.h
 
 linux-oe-g++ {
     LIBS += -lqsgepaper

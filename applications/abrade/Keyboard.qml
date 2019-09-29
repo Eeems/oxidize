@@ -1,10 +1,11 @@
 import QtQuick 2.9
-import KeyboardHandler 1.0
+import Keyboard 1.0
 import "."
 
 
-Item {
-    id: root
+Keyboard {
+    objectName: "keyboard"
+    id: keyboard
     clip: true
     anchors.bottom: parent.bottom
     anchors.left: parent.left
@@ -16,8 +17,8 @@ Item {
     property bool hasCtrl: false
     property bool hasMeta: false
     function hide(){
-        root.visible = false;
-        root.focus = true;
+        keyboard.visible = false;
+        keyboard.focus = true;
     }
 
     function each(column, fn){
@@ -29,27 +30,27 @@ Item {
         }
     }
     function caps(state){
-        root.hasCaps = state;
+        keyboard.hasCaps = state;
     }
     function shift(state){
-        root.hasShift = state;
+        keyboard.hasShift = state;
     }
     function ctrl(state){
-        root.haCtrl = state;
+        keyboard.haCtrl = state;
     }
     function alt(state){
-        root.hasAlt = state;
+        keyboard.hasAlt = state;
     }
     function meta(state){
-        root.hasMeta = state;
+        keyboard.hasMeta = state;
     }
 
     width: parent.width
     height: 480
-    MouseArea { anchors.fill: root }
+    MouseArea { anchors.fill: keyboard }
     Rectangle {
         color: "black"
-        anchors.fill: root
+        anchors.fill: keyboard
         Column {
             id: qwerty
             anchors.centerIn: parent
@@ -94,7 +95,7 @@ Item {
             Row {
                 spacing: parent.spacing
                 anchors.horizontalCenter: parent.horizontalCenter
-                KeyboardKey { id: caps; text: "Caps"; key: Qt.Key_CapsLock; size: 2; onClick: root.caps(this.state()); toggle: true }
+                KeyboardKey { id: caps; text: "Caps"; key: Qt.Key_CapsLock; size: 2; onClick: keyboard.caps(this.state()); toggle: true }
                 KeyboardKey { text: "a"; shifttext: "A" }
                 KeyboardKey { text: "s"; shifttext: "S" }
                 KeyboardKey { text: "d"; shifttext: "D" }
@@ -111,7 +112,7 @@ Item {
             Row {
                 spacing: parent.spacing
                 anchors.horizontalCenter: parent.horizontalCenter
-                KeyboardKey { id: lshift; text: "Shift"; key: Qt.Key_Shift; size: 2; onClick: root.shift(this.state()); toggle: true }
+                KeyboardKey { id: lshift; text: "Shift"; key: Qt.Key_Shift; size: 2; onClick: keyboard.shift(this.state()); toggle: true }
                 KeyboardKey { text: "z"; shifttext: "Z" }
                 KeyboardKey { text: "x"; shifttext: "X" }
                 KeyboardKey { text: "c"; shifttext: "C" }
@@ -122,19 +123,19 @@ Item {
                 KeyboardKey { text: ","; shifttext: "<" }
                 KeyboardKey { text: "."; shifttext: ">" }
                 KeyboardKey { text: "/"; shifttext: "?" }
-                KeyboardKey { id: rshift; text: "Shift"; key: Qt.Key_Shift; size: 2; onClick: root.shift(this.state()); toggle: true }
+                KeyboardKey { id: rshift; text: "Shift"; key: Qt.Key_Shift; size: 2; onClick: keyboard.shift(this.state()); toggle: true }
             }
             Row {
                 spacing: parent.spacing
                 anchors.horizontalCenter: parent.horizontalCenter
-                KeyboardKey { id: lctrl; text: "Ctrl"; key: Qt.Key_Control; onClick: root.ctrl(this.state()); toggle: true }
-                KeyboardKey { id: lmeta; text: "Meta"; key: Qt.Key_Meta; onClick: root.meta(this.state()); toggle: true }
-                KeyboardKey { id: lalt; text: "Alt"; key: Qt.Key_Alt; onClick: root.alt(this.state()); toggle: true }
+                KeyboardKey { id: lctrl; text: "Ctrl"; key: Qt.Key_Control; onClick: keyboard.ctrl(this.state()); toggle: true }
+                KeyboardKey { id: lmeta; text: "Meta"; key: Qt.Key_Meta; onClick: keyboard.meta(this.state()); toggle: true }
+                KeyboardKey { id: lalt; text: "Alt"; key: Qt.Key_Alt; onClick: keyboard.alt(this.state()); toggle: true }
                 KeyboardKey { text: "Space"; size: 6; key: Qt.Key_Space; value: " " }
-                KeyboardKey { id: ralt; text: "Alt"; key: Qt.Key_AltGr; onClick: root.alt(this.state()); toggle: true }
-                KeyboardKey { id: rmeta; text: "Meta"; key: Qt.Key_Meta; onClick: root.meta(this.state()); toggle: true }
+                KeyboardKey { id: ralt; text: "Alt"; key: Qt.Key_AltGr; onClick: keyboard.alt(this.state()); toggle: true }
+                KeyboardKey { id: rmeta; text: "Meta"; key: Qt.Key_Meta; onClick: keyboard.meta(this.state()); toggle: true }
                 KeyboardKey { text: "Menu"; key: Qt.Key_Menu }
-                KeyboardKey { id: rctrl; text: "Ctrl"; key: Qt.Key_Control; onClick: root.ctrl(this.state()); toggle: true }
+                KeyboardKey { id: rctrl; text: "Ctrl"; key: Qt.Key_Control; onClick: keyboard.ctrl(this.state()); toggle: true }
             }
         }
         Column {
@@ -255,17 +256,17 @@ Item {
     }
     KeyboardKey {
         id: hideKey
-        anchors.bottom: root.bottom
-        anchors.left: root.left
+        anchors.bottom: keyboard.bottom
+        anchors.left: keyboard.left
         text: "⬇️"
         key: Qt.Key_unknown
         repeatOnHold: false
-        onClick: root.hide()
+        onClick: keyboard.hide()
     }
     KeyboardKey {
         id: switchKey
-        anchors.bottom: root.bottom
-        anchors.right: root.right
+        anchors.bottom: keyboard.bottom
+        anchors.right: keyboard.right
         text: ["☺️","🔤"][page] || "ABC"
         key: Qt.Key_unknown
         repeatOnHold: false
@@ -278,5 +279,4 @@ Item {
             }
         }
     }
-    KeyboardHandler { objectName: "keyboard"; id: handler }
 }

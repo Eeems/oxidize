@@ -5,7 +5,7 @@ void Keyboard::charPress(const QChar &character, const Qt::KeyboardModifiers &mo
     if(character != '\x0'){
         int key = character.unicode();
         QKeyEvent* event = new QKeyEvent(QEvent::KeyPress, key, modifier, QString(character));
-        QObject* target = view->focusObject();
+        QObject* target = _view->focusObject();
         if(!target){
             qDebug() << "No target";
             return;
@@ -20,9 +20,10 @@ void Keyboard::charPress(const QChar &character, const Qt::KeyboardModifiers &mo
 }
 void Keyboard::keyPress(const Qt::Key &key, const Qt::KeyboardModifiers &modifier, const QString &text){
     QKeyEvent* event = new QKeyEvent(QEvent::KeyPress, key, modifier, text);
-    QObject* target = view->focusObject();
+    QObject* target = _view->focusObject();
     if(!target){
         qDebug() << "No target";
+        emit keyPress(event);
         return;
     }
     qDebug() << target;
@@ -44,9 +45,10 @@ void Keyboard::keyPress(const Qt::Key &key, const Qt::KeyboardModifiers &modifie
 }
 void Keyboard::stringPress(const QString &text, const Qt::KeyboardModifiers &modifier){
     QKeyEvent* event = new QKeyEvent(QEvent::KeyPress, Qt::Key_unknown, modifier, text);
-    QObject* target = view->focusObject();
+    QObject* target = _view->focusObject();
     if(!target){
         qDebug() << "No target";
+        emit keyPress(event);
         return;
     }
     qDebug() << target;
@@ -57,4 +59,13 @@ void Keyboard::stringPress(const QString &text, const Qt::KeyboardModifiers &mod
         QMetaObject::invokeMethod(target, "insert", Q_ARG(int, length.toInt()), Q_ARG(QString, text));
     }
     qDebug() << "String pressed: " << QKeySequence(text + modifier).toString();
+}
+void Keyboard::showKeyboard(){
+    QQuickItem::setVisible(true);
+}
+void Keyboard::hideKeyboard(){
+    QQuickItem::setVisible(false);
+}
+bool Keyboard::keyboardVisible() const{
+    return QQuickItem::isVisible();
 }
