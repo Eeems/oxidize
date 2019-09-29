@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.2, 2019-09-29T00:22:06. -->
+<!-- Written by QtCreator 4.5.2, 2019-09-29T03:43:11. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -279,7 +279,7 @@
        <value type="QString">/opt/poky/2.1.3/sysroots/cortexa9hf-neon-oe-linux-gnueabi</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
-       <value type="QDateTime">2019-09-28T23:30:04</value>
+       <value type="QDateTime">2019-09-29T03:39:07</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>

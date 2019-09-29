@@ -72,13 +72,13 @@ Item {
                 modifiers = modifiers | Qt.MetaModifier;
             }
             if(root.key > 0){
-                handler.keyPress(root.key, modifiers, root.value);
+                keyboard.keyPress(root.key, modifiers, root.value);
             }else{
                 var text = root.getText();
                 if(text.length > 1){
-                    handler.stringPress(text, modifiers, text);
+                    keyboard.stringPress(text, modifiers, text);
                 }else{
-                    handler.charPress(text, modifiers);
+                    keyboard.charPress(text, modifiers);
                 }
             }
             if(!root.toggle){

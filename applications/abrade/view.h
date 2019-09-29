@@ -8,7 +8,7 @@
 
 class View : public QQuickView {
 public:
-    View(QQmlEngine* engine, Controller* controller);
+    View(QQmlEngine* engine, Controller* controller, QRect geometry);
 public slots:
     void keyPressEvent(QKeyEvent*);
     void mouseMoveEvent(QMouseEvent* me);

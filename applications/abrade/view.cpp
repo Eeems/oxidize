@@ -1,8 +1,18 @@
 #include "view.h"
 
-View::View(QQmlEngine *engine, Controller* controller)
+View::View(QQmlEngine *engine, Controller* controller, QRect geometry)
 : QQuickView(engine, Q_NULLPTR),
-  _controller(controller) { }
+  _controller(controller) {
+    QSurfaceFormat format;
+    format.setAlphaBufferSize(8);
+    format.setRenderableType(QSurfaceFormat::OpenGL);
+    setFormat(format);
+    setClearBeforeRendering(true);
+    setColor(QColor(Qt::transparent));
+    setMask(QRegion(0, geometry.height() - 480, geometry.width(), 480));
+    setFlags(Qt::FramelessWindowHint);
+//    setAttribute(Qt::WA_TranslucentBackground);
+}
 
 void View::keyPressEvent(QKeyEvent* ke){
     qDebug() << Q_FUNC_INFO;

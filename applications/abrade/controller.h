@@ -15,7 +15,6 @@ public:
 
 private:
     QCoreApplication* app;
-    EventDevice* gpio_evdev;
 
 signals:
     void aboutToQuit();
