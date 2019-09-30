@@ -61,11 +61,13 @@ void Keyboard::stringPress(const QString &text, const Qt::KeyboardModifiers &mod
     qDebug() << "String pressed: " << QKeySequence(text + modifier).toString();
 }
 void Keyboard::showKeyboard(){
+    _view->reloadBackground();
+    _view->show();
     QQuickItem::setVisible(true);
 }
 void Keyboard::hideKeyboard(){
     QQuickItem::setVisible(false);
 }
 bool Keyboard::keyboardVisible() const{
-    return QQuickItem::isVisible();
+    return _view->isVisible() && QQuickItem::isVisible();
 }
