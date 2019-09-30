@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     eventdevice.cpp \
     view.cpp \
     keyboard.cpp \
-    evdev.cpp
+    evdev.cpp \
+    fb2png.cpp
 
 TARGET=abrade
 
@@ -37,8 +38,14 @@ HEADERS += \
     eventdevice.h \
     view.h \
     keyboard.h \
-    evdev.h
+    evdev.h \
+    events.h \
+    events.h \
+    events.h \
+    events.h \
+    fb2png.h
 
 linux-oe-g++ {
     LIBS += -lqsgepaper
+    LIBS += -lpng16
 }

@@ -63,7 +63,6 @@ int grab_wacom(){
         qDebug() << "Failed to grab wacom: " << res;
     }else{
         qDebug() << "Grabbed wacom";
-        std::atexit(ungrab_wacom);
     }
     return res;
 }
@@ -78,7 +77,6 @@ int grab_touchscreen(){
         qDebug() << "Failed to grab touchscreen: " << res;
     }else{
         qDebug() << "Grabbed touchscreen";
-        std::atexit(ungrab_touchscreen);
     }
     return res;
 }
@@ -93,7 +91,6 @@ int grab_gpio(){
          qDebug() << "Failed to grab gpio: " << res;
      }else{
          qDebug() << "Grabbed gpio";
-         std::atexit(ungrab_gpio);
      }
      return res;
 }

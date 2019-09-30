@@ -1,4 +1,5 @@
 #include "view.h"
+#include <QQuickItem>
 
 View::View(QQmlEngine *engine, Controller* controller, QRect geometry)
 : QQuickView(engine, Q_NULLPTR),
@@ -13,43 +14,37 @@ View::View(QQmlEngine *engine, Controller* controller, QRect geometry)
     setFlags(Qt::FramelessWindowHint);
 //    setAttribute(Qt::WA_TranslucentBackground);
 }
-
-void View::keyPressEvent(QKeyEvent* ke){
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "mw" << ke->key() << "down";
-//    QQuickView::keyPressEvent(ke); // base class implementation
+void View::reloadBackground(){
+    QQuickItem* background = rootObject()->findChild<QQuickItem*>("background");
+    QMetaObject::invokeMethod(background, "reload");
 }
 
-void View::mouseMoveEvent(QMouseEvent* me){
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << me->pos();
-//    QQuickView::mouseMoveEvent(me);
-}
-
-void View::mousePressEvent(QMouseEvent* me){
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << me->pos();
-//    QQuickView::mousePressEvent(me);
-}
-
-void View::mouseReleaseEvent(QMouseEvent* me){
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << me->pos();
-//    QQuickView::mouseReleaseEvent(me);
-}
-
-void View::tabletEvent(QTabletEvent* te){
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << te;
-//    QQuickView::tabletEvent(te);
-}
-
-void View::touchEvent(QTouchEvent* te){
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << te;
-//    QQuickView::touchEvent(te);
-}
-
-void View::quit(){
-
+bool View::event(QEvent* e){
+    e->accept();
+    QEvent::Type type = e->type();
+    if(type == QEvent::TouchBegin || type == QEvent::TouchCancel
+            || type == QEvent::TouchEnd || type == QEvent::TouchUpdate){
+        QTouchEvent* te = static_cast<QTouchEvent*>(e);
+        qDebug() << te;
+        emit _controller->emitableTouchEvent(te);
+    }else if(type == QEvent::TabletEnterProximity || type == QEvent::TabletLeaveProximity
+             || type == QEvent::TabletMove || type == QEvent::TabletPress
+             || type == QEvent::TabletRelease || type == QEvent::TabletTrackingChange){
+        QTabletEvent* te = static_cast<QTabletEvent*>(e);
+        qDebug() << te;
+//        emit _controller->emitableTabletEvent(te);
+    }else if(type == QEvent::MouseButtonDblClick || type == QEvent::MouseButtonPress
+             || type == QEvent::MouseButtonRelease || type == QEvent::MouseMove
+             || type == QEvent::MouseTrackingChange){
+        QMouseEvent* me = static_cast<QMouseEvent*>(e);
+        qDebug() << me;
+        emit _controller->mouseEvent(me);
+    }else if(type == QEvent::KeyPress || type == QEvent::KeyRelease){
+        QKeyEvent* ke = static_cast<QKeyEvent*>(e);
+        qDebug() << ke;
+        emit _controller->keyEvent(ke);
+    }else if(type == QEvent::Quit){
+        emit _controller->quit();
+    }
+    return QQuickView::event(e);
 }
