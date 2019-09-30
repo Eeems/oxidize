@@ -58,13 +58,6 @@ int main(int argc, char *argv[]){
         qWarning("Failed to connect to system bus.");
         return EXIT_FAILURE;
     }
-    char* args[1]{(char*)"fb2png"};
-    int res = fb2png(2, args);
-    if(res){
-        qDebug() << "Failed to generate png from framebuffer: " << res;
-    }else{
-        qDebug() << "Generated png from framebuffer";
-    }
     // Register service
     QDBusConnectionInterface* interface = bus.interface();
     QDBusReply<QDBusConnectionInterface::RegisterServiceReply> reply = interface->registerService("codes.eeems.abrade");
@@ -100,7 +93,6 @@ int main(int argc, char *argv[]){
         qFatal("Unable to register keyboard at DBus");
         return EXIT_FAILURE;
     }
-    view.show();
     qDebug() << "PID: " << getpid();
     qDebug() << "Files open: " << get_num_fds();
     std::atexit(ungrab_wacom);
@@ -110,7 +102,7 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
     QTimer::singleShot(1000, [keyboard, &view](){
-        keyboard->showKeyboard();
+        view.show();
         view.reloadBackground();
     });
     return app.exec();

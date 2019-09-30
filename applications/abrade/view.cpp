@@ -1,4 +1,5 @@
 #include "view.h"
+#include <fb2png.h>
 #include <QQuickItem>
 
 View::View(QQmlEngine *engine, Controller* controller, QRect geometry)
@@ -15,6 +16,13 @@ View::View(QQmlEngine *engine, Controller* controller, QRect geometry)
 //    setAttribute(Qt::WA_TranslucentBackground);
 }
 void View::reloadBackground(){
+    char* args[1]{(char*)"fb2png"};
+    int res = fb2png(2, args);
+    if(res){
+        qDebug() << "Failed to generate png from framebuffer: " << res;
+    }else{
+        qDebug() << "Generated png from framebuffer";
+    }
     QQuickItem* background = rootObject()->findChild<QQuickItem*>("background");
     QMetaObject::invokeMethod(background, "reload");
 }
