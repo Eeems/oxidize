@@ -3,22 +3,19 @@
 
 #include <QQuickView>
 #include <QQmlEngine>
+#include <QTouchEvent>
 #include "controller.h"
 
 
 class View : public QQuickView {
 public:
     View(QQmlEngine* engine, Controller* controller, QRect geometry);
+    void reloadBackground();
 public slots:
-    void keyPressEvent(QKeyEvent*);
-    void mouseMoveEvent(QMouseEvent* me);
-    void mousePressEvent(QMouseEvent* me);
-    void mouseReleaseEvent(QMouseEvent* me);
-    void tabletEvent(QTabletEvent* te);
-    void touchEvent(QTouchEvent* te);
-    void quit();
+    bool event(QEvent* e);
 signals:
     void aboutToQuit();
+    void imageChanged();
 private:
     Controller* _controller;
 };

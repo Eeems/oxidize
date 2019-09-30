@@ -8,9 +8,16 @@ Item {
     height: screenGeometry.height
     visible: true
     Image {
+        id: background
+        objectName: "background"
         anchors.fill: parent
-        source: "/temp/fb.png"
+        source: "file:/tmp/fb.png"
+        cache: false
+        function reload(){
+            var src = this.source;
+            this.source = "";
+            this.source = src;
+        }
     }
-
     Keyboard { id: keyboard; visible: false }
 }

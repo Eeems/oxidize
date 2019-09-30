@@ -8,13 +8,14 @@
 #include "controller.h"
 #include "view.h"
 #include "keyboard.h"
+#include "fb2png.h"
 
 #ifdef __arm__
 Q_IMPORT_PLUGIN(QsgEpaperPlugin)
 #endif
 
 const char* confpath = "/etc/dbus-1/system.d/codes.eeems.abrade.conf";
-const char *qt_version = qVersion();
+const char* qt_version = qVersion();
 
 bool exists(const std::string& name) {
     std::fstream file(name.c_str());
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]){
     // qputenv("QT_DEBUG_BACKINGSTORE", "1");
     // No need to use env for grabbing as we are doing it manually
     // qputenv("QT_QPA_EVDEV_KEYBOARD_PARAMETERS", "grab=1");
-    // qputenv("QT_QPA_EVDEV_MOUSE_PARAMETERS", "grab=1");
+//     qputenv("QT_QPA_EVDEV_MOUSE_PARAMETERS", "grab=1");
 #endif
     qmlRegisterType<Keyboard>("Keyboard", 1, 0, "Keyboard");
     QGuiApplication app(argc, argv);
@@ -56,6 +57,13 @@ int main(int argc, char *argv[]){
     if(!bus.isConnected()){
         qWarning("Failed to connect to system bus.");
         return EXIT_FAILURE;
+    }
+    char* args[1]{(char*)"fb2png"};
+    int res = fb2png(2, args);
+    if(res){
+        qDebug() << "Failed to generate png from framebuffer: " << res;
+    }else{
+        qDebug() << "Generated png from framebuffer";
     }
     // Register service
     QDBusConnectionInterface* interface = bus.interface();
@@ -90,14 +98,20 @@ int main(int argc, char *argv[]){
     keyboard->init(&view, &bus);
     if (!bus.registerObject("/keyboard", keyboard, QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllSlots)) {
         qFatal("Unable to register keyboard at DBus");
-        return 1;
+        return EXIT_FAILURE;
     }
     view.show();
-    keyboard->showKeyboard();
     qDebug() << "PID: " << getpid();
     qDebug() << "Files open: " << get_num_fds();
+    std::atexit(ungrab_wacom);
+    std::atexit(ungrab_touchscreen);
+    std::atexit(ungrab_gpio);
     if(grab_wacom() || grab_touchscreen() || grab_gpio()){
         return EXIT_FAILURE;
     }
+    QTimer::singleShot(1000, [keyboard, &view](){
+        keyboard->showKeyboard();
+        view.reloadBackground();
+    });
     return app.exec();
 }
