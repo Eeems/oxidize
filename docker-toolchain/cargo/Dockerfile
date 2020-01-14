@@ -9,7 +9,7 @@ ARG GID=1000
 ARG ostype=Linux
 
 RUN apt-get -qq update
-RUN apt-get -qq install curl build-essential gcc-arm-linux-gnueabihf vim
+RUN apt-get -qq install curl build-essential gcc-arm-linux-gnueabihf vim python
 
 RUN groupadd -r --gid ${GID} ${UNAME}
 RUN useradd -u $UID -g $GID -m $UNAME
