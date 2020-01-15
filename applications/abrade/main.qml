@@ -11,13 +11,18 @@ Item {
         id: background
         objectName: "background"
         anchors.fill: parent
-        source: "file:/tmp/fb.png"
         cache: false
+        source: "file:/tmp/fb.png"
         function reload(){
-            var src = this.source;
             this.source = "";
-            this.source = src;
+            timer.start();
         }
     }
+    Timer {
+        id: timer
+        interval: 1
+        onTriggered: background.source = "file:/tmp/fb.png"
+    }
+
     Keyboard { id: keyboard; visible: false }
 }

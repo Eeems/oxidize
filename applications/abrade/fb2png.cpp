@@ -37,42 +37,11 @@
 #include <linux/fb.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <QtDebug>
 
-int fb2png(int argc, char *argv[])
+int fb2png_exec(char *program, char *fbdevice, char *pngname)
 {
-    char *program = argv[0];
-    char *fbdevice = (char*)"/dev/fb0";
-    char *pngname = (char*)"/tmp/fb.png";
-
-    int opt = 0;
-
     //--------------------------------------------------------------------
-
-    while ((opt = getopt(argc, argv, "d:p:")) != -1)
-    {
-        switch (opt)
-        {
-        case 'd':
-
-            fbdevice = optarg;
-            break;
-
-        case 'p':
-
-            pngname = optarg;
-            break;
-
-        default:
-
-            fprintf(stderr,
-                    "Usage: %s [-d device] [-p pngname]\n",
-                    program);
-            exit(EXIT_FAILURE);
-            break;
-        }
-    }
-    //--------------------------------------------------------------------
-
     int fbfd = open(fbdevice, O_RDWR);
 
     if (fbfd == -1)
@@ -276,4 +245,44 @@ int fb2png(int argc, char *argv[])
     //--------------------------------------------------------------------
 
     return 0;
+}
+
+
+int fb2png_defaults(){
+    return fb2png_exec((char*)"fb2png", (char*)"/dev/fb0", (char*)"/tmp/fb.png");
+}
+
+int fb2png(int argc, char *argv[]){
+    char *program = argv[0];
+    char *fbdevice = (char*)"/dev/fb0";
+    char *pngname = (char*)"/tmp/fb.png";
+
+    int opt = 0;
+
+    //--------------------------------------------------------------------
+
+    while ((opt = getopt(argc, argv, "d:p:")) != -1)
+    {
+        switch (opt)
+        {
+        case 'd':
+
+            fbdevice = optarg;
+            break;
+
+        case 'p':
+
+            pngname = optarg;
+            break;
+
+        default:
+
+            fprintf(stderr,
+                    "Usage: %s [-d device] [-p pngname]\n",
+                    program);
+            exit(EXIT_FAILURE);
+            break;
+        }
+    }
+    return fb2png_exec(program, fbdevice, pngname);
 }

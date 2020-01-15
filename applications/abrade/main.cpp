@@ -15,11 +15,17 @@ Q_IMPORT_PLUGIN(QsgEpaperPlugin)
 #endif
 
 const char* confpath = "/etc/dbus-1/system.d/codes.eeems.abrade.conf";
+const char* pngpath = "/tmp/fb.png";
 const char* qt_version = qVersion();
 
 bool exists(const std::string& name) {
     std::fstream file(name.c_str());
     return file.good();
+}
+
+void remove_fb_png(){
+    qDebug() << "Removing framebuffer image";
+    remove(pngpath);
 }
 
 int main(int argc, char *argv[]){
@@ -53,6 +59,16 @@ int main(int argc, char *argv[]){
         outfile.close();
         system("systemctl reload dbus");
     }
+    if(exists(pngpath)){
+        remove_fb_png();
+    }
+//    std::atexit(remove_fb_png);
+    qDebug() << "Generating png from framebuffer...";
+    int res = fb2png_defaults();
+    if(res){
+        qDebug() << "Failed:" << res;
+        return EXIT_FAILURE;
+    }
     QDBusConnection bus = QDBusConnection::systemBus();
     if(!bus.isConnected()){
         qWarning("Failed to connect to system bus.");
@@ -63,7 +79,7 @@ int main(int argc, char *argv[]){
     QDBusReply<QDBusConnectionInterface::RegisterServiceReply> reply = interface->registerService("codes.eeems.abrade");
     if(!reply.isValid()){
         QDBusError ex = reply.error();
-        qWarning(ex.message().toStdString().c_str());
+        qWarning("%s", ex.message().toStdString().c_str());
         return EXIT_FAILURE;
     }
     qDebug() << "Successfully registered code.eeems.abrade service";
@@ -101,9 +117,10 @@ int main(int argc, char *argv[]){
     if(grab_wacom() || grab_touchscreen() || grab_gpio()){
         return EXIT_FAILURE;
     }
-    QTimer::singleShot(1000, [keyboard, &view](){
+    QTimer::singleShot(1000, [&view](){
+        qDebug() << "Showing main window";
         view.show();
-        view.reloadBackground();
     });
+    qDebug() << "Starting main event loop";
     return app.exec();
 }

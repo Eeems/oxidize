@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 int Controller::is_uint(std::string input){
-    int i;
+    unsigned int i;
     for (i=0; i < input.length(); i++){
         if(!isdigit(input.at(i))){
             return 0;
