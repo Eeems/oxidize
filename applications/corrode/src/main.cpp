@@ -5,6 +5,7 @@
 #include <QtQuick>
 #include <QQuickView>
 #include <QList>
+#include <QtDBus>
 #include "view/mainview.h"
 #include "widget/keyboardhandler.h"
 
@@ -34,6 +35,21 @@ int main(int argc, char *argv[]) {
     QFont font = QFont(family, 10, 1);
     font.setFamily(font.defaultFamily());
     app.setFont(font);
+    // Connect to DBus
+    QDBusConnection bus = QDBusConnection::systemBus();
+    if(!bus.isConnected()){
+        qWarning("Failed to connect to system bus.");
+        return EXIT_FAILURE;
+    }
+    // Connect to service
+    QDBusConnectionInterface* interface = bus.interface();
+    QStringList serviceNames = interface->registeredServiceNames();
+    qDebug() << "Services: " << serviceNames;
+    if (!serviceNames.contains("codes.eeems.abrade")){
+        qWarning("codes.eeems.abrade service is not running");
+        return EXIT_FAILURE;
+    }
+    qDebug() << "Successfully connected to abrade service";
     // Load QML
     QQmlApplicationEngine engine;
     MainView view(&engine);
