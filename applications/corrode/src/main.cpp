@@ -8,6 +8,7 @@
 #include <QtDBus>
 #include "view/mainview.h"
 #include "widget/keyboardhandler.h"
+#include "events.h"
 
 #ifdef __arm__
 Q_IMPORT_PLUGIN(QsgEpaperPlugin)
@@ -35,21 +36,6 @@ int main(int argc, char *argv[]) {
     QFont font = QFont(family, 10, 1);
     font.setFamily(font.defaultFamily());
     app.setFont(font);
-    // Connect to DBus
-    QDBusConnection bus = QDBusConnection::systemBus();
-    if(!bus.isConnected()){
-        qWarning("Failed to connect to system bus.");
-        return EXIT_FAILURE;
-    }
-    // Connect to service
-    QDBusConnectionInterface* interface = bus.interface();
-    QStringList serviceNames = interface->registeredServiceNames();
-    qDebug() << "Services: " << serviceNames;
-    if (!serviceNames.contains("codes.eeems.abrade")){
-        qWarning("codes.eeems.abrade service is not running");
-        return EXIT_FAILURE;
-    }
-    qDebug() << "Successfully connected to abrade service";
     // Load QML
     QQmlApplicationEngine engine;
     MainView view(&engine);
@@ -64,14 +50,32 @@ int main(int argc, char *argv[]) {
     }
     // Allow quitting
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
-    // Start
-    view.show();
-    qDebug() << "View shown";
-    KeyboardHandler* keyboard = root->findChild<KeyboardHandler*>("keyboard");
-    if(!keyboard){
-        qDebug() << "No keyboard handler";
-        return 1;
+
+    // Connect to DBus
+    QDBusConnection bus = QDBusConnection::systemBus();
+    if(!bus.isConnected()){
+        qWarning("Failed to connect to system bus.");
+        return EXIT_FAILURE;
     }
-    keyboard->view = &view;
+    // Connect to service
+    QDBusConnectionInterface* interface = bus.interface();
+    QStringList serviceNames = interface->registeredServiceNames();
+    qDebug() << "Services: " << serviceNames;
+    if (serviceNames.contains("codes.eeems.abrade")){
+        view.show();
+        qDebug() << "abrade service already running";
+    }else{
+        qDebug() << "Waiting for abrade service";
+        // Wait for service to start
+        QDBusServiceWatcher serviceWatcher("codes.eeems.abrade", bus, QDBusServiceWatcher::WatchForRegistration);
+        QObject::connect(&serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &view, &MainView::show);
+    }
+//    KeyboardHandler* keyboard = root->findChild<KeyboardHandler*>("keyboard");
+//    if(!keyboard){
+//        qDebug() << "No keyboard handler";
+//        return 1;
+//    }
+//    keyboard->view = &view;
+    // Start
     return app.exec();
 }

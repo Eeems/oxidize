@@ -4,14 +4,14 @@
 Controller::Controller(QGuiApplication* application)
 : QDBusAbstractAdaptor(application),
   app(application){
-    connect(app, SIGNAL(aboutToQuit()), SIGNAL(aboutToQuit()));
-    connect(app, SIGNAL(aboutToQuit()), SIGNAL(aboutToQuit()));
     qDBusRegisterMetaType<MouseEvent>();
     qDBusRegisterMetaType<KeyEvent>();
     qDBusRegisterMetaType<float>();
     qDBusRegisterMetaType<TouchPoint>();
     qDBusRegisterMetaType<TouchEvent>();
 //    qDBusRegisterMetaType<TabletEvent>();
+    setAutoRelaySignals(true);
+//    connect(app, SIGNAL(aboutToQuit()), SIGNAL(aboutToQuit()));
 }
 Controller::~Controller(){ }
 void Controller::emitableKeyEvent(QKeyEvent* ke){
