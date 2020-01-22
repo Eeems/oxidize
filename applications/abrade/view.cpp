@@ -38,7 +38,7 @@ bool View::event(QEvent* e){
              || type == QEvent::TabletRelease || type == QEvent::TabletTrackingChange){
         QTabletEvent* te = static_cast<QTabletEvent*>(e);
         qDebug() << te;
-//        emit _controller->emitableTabletEvent(te);
+        emit _controller->emitableTabletEvent(te);
     }else if(type == QEvent::MouseButtonDblClick || type == QEvent::MouseButtonPress
              || type == QEvent::MouseButtonRelease || type == QEvent::MouseMove
              || type == QEvent::MouseTrackingChange){

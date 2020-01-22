@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.0, 2020-01-18T15:32:20. -->
+<!-- Written by QtCreator 4.11.0, 2020-01-21T23:30:46. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -222,7 +222,7 @@
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts"/>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths"/>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots"/>
-      <value type="QString" key="RemoteLinux.CheckForFreeDiskSpaceStep.PathToCheck">/</value>
+      <value type="QString" key="RemoteLinux.CheckForFreeDiskSpaceStep.PathToCheck">/opt</value>
       <value type="qlonglong" key="RemoteLinux.CheckForFreeDiskSpaceStep.RequiredSpace">5242880</value>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedLocalTimes"/>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedRemoteTimes"/>
@@ -255,10 +255,10 @@
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedLocalTimes">
-       <value type="QDateTime">2020-01-15T21:20:36.934</value>
+       <value type="QDateTime">2020-01-21T23:30:12.608</value>
       </valuelist>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedRemoteTimes">
-       <value type="QDateTime">2020-01-15T21:20:39.000</value>
+       <value type="QDateTime">2020-01-21T23:30:15.000</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>

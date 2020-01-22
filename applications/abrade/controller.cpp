@@ -9,9 +9,8 @@ Controller::Controller(QGuiApplication* application)
     qDBusRegisterMetaType<float>();
     qDBusRegisterMetaType<TouchPoint>();
     qDBusRegisterMetaType<TouchEvent>();
-//    qDBusRegisterMetaType<TabletEvent>();
+    qDBusRegisterMetaType<TabletEvent>();
     setAutoRelaySignals(true);
-//    connect(app, SIGNAL(aboutToQuit()), SIGNAL(aboutToQuit()));
 }
 Controller::~Controller(){ }
 void Controller::emitableKeyEvent(QKeyEvent* ke){

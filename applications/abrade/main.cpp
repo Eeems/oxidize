@@ -111,12 +111,12 @@ int main(int argc, char *argv[]){
     }
     qDebug() << "PID: " << getpid();
     qDebug() << "Files open: " << get_num_fds();
-    std::atexit(ungrab_wacom);
-    std::atexit(ungrab_touchscreen);
-    std::atexit(ungrab_gpio);
-    if(grab_wacom() || grab_touchscreen() || grab_gpio()){
-        return EXIT_FAILURE;
-    }
+//    std::atexit(ungrab_wacom);
+//    std::atexit(ungrab_touchscreen);
+//    std::atexit(ungrab_gpio);
+//    if(grab_wacom() || grab_touchscreen() || grab_gpio()){
+//        return EXIT_FAILURE;
+//    }
     QTimer::singleShot(1000, [&view](){
         qDebug() << "Showing main window";
         view.show();

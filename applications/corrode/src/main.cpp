@@ -8,7 +8,7 @@
 #include <QtDBus>
 #include "view/mainview.h"
 #include "widget/keyboardhandler.h"
-#include "events.h"
+#include "abradeinterface.h"
 
 #ifdef __arm__
 Q_IMPORT_PLUGIN(QsgEpaperPlugin)
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     QQuickItem* root = view.rootObject();
     if(root->children().isEmpty()){
         qDebug() << "Nothing to display";
-        return 1;
+        return EXIT_FAILURE;
     }
     // Allow quitting
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
@@ -58,24 +58,28 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     // Connect to service
-    QDBusConnectionInterface* interface = bus.interface();
-    QStringList serviceNames = interface->registeredServiceNames();
+    QStringList serviceNames = bus.interface()->registeredServiceNames();
     qDebug() << "Services: " << serviceNames;
-    if (serviceNames.contains("codes.eeems.abrade")){
-        view.show();
+    if (!serviceNames.contains("codes.eeems.abrade")){
         qDebug() << "abrade service already running";
-    }else{
-        qDebug() << "Waiting for abrade service";
-        // Wait for service to start
-        QDBusServiceWatcher serviceWatcher("codes.eeems.abrade", bus, QDBusServiceWatcher::WatchForRegistration);
-        QObject::connect(&serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &view, &MainView::show);
     }
+    AbradeInterface interface("codes.eeems.abrade", "/", bus);
+    if (!interface.isValid()) {
+        QDBusError ex = interface.lastError();
+        qFatal("%s", ex.message().toStdString().c_str());
+        return EXIT_FAILURE;
+    }
+    interface.view = &view;
+    interface.connect(&interface, SIGNAL(aboutToQuit()), &app, SLOT(quit()));
+    interface.connect(&interface, SIGNAL(keyEvent(KeyEvent)), &interface, SLOT(keyEventRecieved(KeyEvent)));
+
 //    KeyboardHandler* keyboard = root->findChild<KeyboardHandler*>("keyboard");
 //    if(!keyboard){
 //        qDebug() << "No keyboard handler";
 //        return 1;
 //    }
 //    keyboard->view = &view;
+    view.show();
     // Start
     return app.exec();
 }
